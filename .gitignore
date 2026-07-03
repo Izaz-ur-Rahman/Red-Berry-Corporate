@@ -1,0 +1,8 @@
+# Ignore local development settings
+RedBerryCorporate/appsettings.json
+RedBerryCorporate/appsettings.Development.json
+
+# Visual Studio
+.vs/
+bin/
+obj/
