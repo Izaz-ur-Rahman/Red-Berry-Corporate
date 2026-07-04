@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RedBerryCorporate.Data;
 using RedBerryCorporate.DTOs.Contact;
+using RedBerryCorporate.Interfaces;
 using RedBerryCorporate.Models;
+
 
 namespace RedBerryCorporate.Repository
 {

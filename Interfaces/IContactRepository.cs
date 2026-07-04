@@ -1,7 +1,7 @@
 ﻿using RedBerryCorporate.DTOs.Contact;
 using RedBerryCorporate.Models;
 
-namespace RedBerryCorporate.Repository
+namespace RedBerryCorporate.Interfaces
 {
     public interface IContactRepository
     {
