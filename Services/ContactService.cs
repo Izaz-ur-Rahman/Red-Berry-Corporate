@@ -1,6 +1,6 @@
 ﻿using RedBerryCorporate.DTOs.Contact;
+using RedBerryCorporate.Interfaces;
 using RedBerryCorporate.Models;
-using RedBerryCorporate.Repository;
 
 namespace RedBerryCorporate.Services
 {

@@ -1,6 +1,6 @@
 ﻿using RedBerryCorporate.DTOs.Contact;
 
-namespace RedBerryCorporate.Services
+namespace RedBerryCorporate.Interfaces
 {
     public interface IContactService
     {
