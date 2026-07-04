@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RedBerryCorporate.Data;
 using RedBerryCorporate.Repository;
+using RedBerryCorporate.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Controllers
@@ -9,8 +10,9 @@ builder.Services.AddControllers();
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+// add services and repositories
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IContactService, ContactService>();
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
