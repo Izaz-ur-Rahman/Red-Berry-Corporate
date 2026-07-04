@@ -1,15 +1,13 @@
 ﻿namespace RedBerryCorporate.Helpers
 {
-    public class ApiResponse<T>
+    public class ApiErrorResponse
     {
-        public bool Success { get; set; }
+        public bool Success => false;
 
         public string Message { get; set; } = string.Empty;
 
-        public T? Data { get; set; }
-
-        public object? Errors { get; set; }
-
         public DateTime TimeStamp { get; set; } = DateTime.UtcNow;
+
+        public string? TraceId { get; set; }
     }
 }

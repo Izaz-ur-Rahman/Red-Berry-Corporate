@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using RedBerryCorporate.Data;
+using RedBerryCorporate.Interfaces;
+using RedBerryCorporate.Middleware;
 using RedBerryCorporate.Repository;
 using RedBerryCorporate.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Controllers
@@ -37,7 +40,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseCors("ReactPolicy");
