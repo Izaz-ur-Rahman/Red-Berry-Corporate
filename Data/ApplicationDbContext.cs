@@ -12,5 +12,6 @@ namespace RedBerryCorporate.Data
         }
 
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<BlueprintSubmission> BlueprintSubmissions { get; set; }
     }
 }
