@@ -56,11 +56,10 @@ namespace RedBerryCorporate.Controllers
                 }
             });
         }
-
-        [HttpPost("details")]
-        public async Task<IActionResult> Details([FromBody] ContactDeleteDto dto)
+        [HttpPost("details/{id:int}")]
+        public async Task<IActionResult> Details(int id)
         {
-            var contact = await _service.GetByIdAsync(dto.Id);
+            var contact = await _service.GetByIdAsync(id);
 
             if (contact == null)
             {
@@ -79,9 +78,11 @@ namespace RedBerryCorporate.Controllers
             });
         }
 
-        [HttpPost("update")]
-        public async Task<IActionResult> Update([FromBody] ContactUpdateDto dto)
+        [HttpPost("update/{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] ContactUpdateDto dto)
         {
+            dto.Id = id;
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ApiResponse<object>
@@ -110,10 +111,10 @@ namespace RedBerryCorporate.Controllers
             });
         }
 
-        [HttpPost("delete")]
-        public async Task<IActionResult> Delete([FromBody] ContactDeleteDto dto)
+        [HttpPost("delete/{id:int}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            bool deleted = await _service.DeleteAsync(dto.Id);
+            bool deleted = await _service.DeleteAsync(id);
 
             if (!deleted)
             {
