@@ -16,6 +16,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // add services and repositories
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<IBlueprintRepository, BlueprintRepository>();
+
+builder.Services.AddScoped<IBlueprintService, BlueprintService>();
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
