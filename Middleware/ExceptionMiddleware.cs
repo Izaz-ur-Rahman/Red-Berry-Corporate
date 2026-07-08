@@ -26,7 +26,8 @@ namespace RedBerryCorporate.Middleware
 
                 var response = new ApiErrorResponse
                 {
-                    Message = "Internal Server Error.",
+                    //Message = "Internal Server Error.",
+                    Message = ex.ToString(),
                     TraceId = context.TraceIdentifier
                 };
 
