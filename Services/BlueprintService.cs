@@ -8,14 +8,66 @@ namespace RedBerryCorporate.Services
     public class BlueprintService : IBlueprintService
     {
         private readonly IBlueprintRepository _repository;
+        private readonly IEmailService _emailService;
 
-        public BlueprintService(IBlueprintRepository repository)
+        public BlueprintService(
+            IBlueprintRepository repository,
+            IEmailService emailService)
         {
             _repository = repository;
+            _emailService = emailService;
         }
 
         #region Create
+        //#region Create
 
+        //public async Task<BlueprintResponseDto> CreateAsync(BlueprintCreateDto dto)
+        //{
+        //    BlueprintSubmission entity = new BlueprintSubmission
+        //    {
+        //        Name = dto.Name,
+        //        Email = dto.Email,
+        //        Whatsapp = dto.Whatsapp,
+        //        Company = dto.Company,
+        //        Location = dto.Location,
+        //        BusinessStage = dto.BusinessStage,
+        //        ReviewMethod = dto.ReviewMethod,
+        //        Message = dto.Message,
+
+        //        Ambition = dto.Result.Ambition,
+        //        TotalScore = dto.Result.TotalScore,
+
+        //        CorporateScore = dto.Result.CorporateScore,
+        //        FinancialScore = dto.Result.FinancialScore,
+        //        MarketScore = dto.Result.MarketScore,
+        //        LegacyScore = dto.Result.LegacyScore,
+
+        //        StrongestLayer = dto.Result.StrongestLayer,
+        //        ExposedLayer = dto.Result.ExposedLayer,
+
+        //        RecommendedPathway = dto.Result.RecommendedPathway,
+        //        OverallStatus = dto.Result.OverallStatus,
+
+        //        ImprovementLayers = JsonConvert.SerializeObject(dto.Result.ImprovementLayers),
+
+        //        PatternsJson = JsonConvert.SerializeObject(dto.Result.Patterns)
+        //    };
+
+        //    // Save Record
+        //    entity = await _repository.CreateAsync(entity);
+
+        //    // Send Emails
+        //    try
+        //    {
+        //        await _emailService.SendBlueprintEmailsAsync(entity);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"Email sending failed. {ex.Message}", ex);
+        //    }
+
+        //    return MapToResponse(entity);
+        //}
         public async Task<BlueprintResponseDto> CreateAsync(BlueprintCreateDto dto)
         {
             BlueprintSubmission entity = new BlueprintSubmission
@@ -30,36 +82,94 @@ namespace RedBerryCorporate.Services
                 Message = dto.Message,
 
                 Ambition = dto.Result.Ambition,
-
                 TotalScore = dto.Result.TotalScore,
 
                 CorporateScore = dto.Result.CorporateScore,
-
                 FinancialScore = dto.Result.FinancialScore,
-
                 MarketScore = dto.Result.MarketScore,
-
                 LegacyScore = dto.Result.LegacyScore,
 
                 StrongestLayer = dto.Result.StrongestLayer,
-
                 ExposedLayer = dto.Result.ExposedLayer,
 
                 RecommendedPathway = dto.Result.RecommendedPathway,
-
                 OverallStatus = dto.Result.OverallStatus,
 
                 ImprovementLayers = JsonConvert.SerializeObject(dto.Result.ImprovementLayers),
-
                 PatternsJson = JsonConvert.SerializeObject(dto.Result.Patterns)
             };
 
-            entity = await _repository.CreateAsync(entity);
+            try
+            {
+                // STEP 1
+                entity = await _repository.CreateAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Database saving failed. " + ex.Message, ex);
+            }
+
+            try
+            {
+                // STEP 2
+                await _emailService.SendBlueprintEmailsAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                // Log only
+                Console.WriteLine("Email Error:");
+                Console.WriteLine(ex);
+
+                // DO NOT throw
+            }
 
             return MapToResponse(entity);
         }
-
         #endregion
+        //public async Task<BlueprintResponseDto> CreateAsync(BlueprintCreateDto dto)
+        //{
+        //    BlueprintSubmission entity = new BlueprintSubmission
+        //    {
+        //        Name = dto.Name,
+        //        Email = dto.Email,
+        //        Whatsapp = dto.Whatsapp,
+        //        Company = dto.Company,
+        //        Location = dto.Location,
+        //        BusinessStage = dto.BusinessStage,
+        //        ReviewMethod = dto.ReviewMethod,
+        //        Message = dto.Message,
+
+        //        Ambition = dto.Result.Ambition,
+
+        //        TotalScore = dto.Result.TotalScore,
+
+        //        CorporateScore = dto.Result.CorporateScore,
+
+        //        FinancialScore = dto.Result.FinancialScore,
+
+        //        MarketScore = dto.Result.MarketScore,
+
+        //        LegacyScore = dto.Result.LegacyScore,
+
+        //        StrongestLayer = dto.Result.StrongestLayer,
+
+        //        ExposedLayer = dto.Result.ExposedLayer,
+
+        //        RecommendedPathway = dto.Result.RecommendedPathway,
+
+        //        OverallStatus = dto.Result.OverallStatus,
+
+        //        ImprovementLayers = JsonConvert.SerializeObject(dto.Result.ImprovementLayers),
+
+        //        PatternsJson = JsonConvert.SerializeObject(dto.Result.Patterns)
+        //    };
+
+        //    entity = await _repository.CreateAsync(entity);
+
+        //    return MapToResponse(entity);
+        //}
+
+
 
         #region GetById
 

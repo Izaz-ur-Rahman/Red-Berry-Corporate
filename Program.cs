@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RedBerryCorporate.Data;
 using RedBerryCorporate.Interfaces;
 using RedBerryCorporate.Middleware;
+using RedBerryCorporate.Models;
 using RedBerryCorporate.Repository;
 using RedBerryCorporate.Services;
 
@@ -19,6 +20,10 @@ builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IBlueprintRepository, BlueprintRepository>();
 
 builder.Services.AddScoped<IBlueprintService, BlueprintService>();
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
