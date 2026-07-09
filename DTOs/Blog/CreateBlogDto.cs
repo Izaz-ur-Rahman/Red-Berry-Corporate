@@ -12,6 +12,7 @@ namespace RedBerryCorporate.DTOs.Blog
         public string MetaDescription { get; set; }
 
         public string BlogDetails { get; set; }
+        public string Slug { get; set; }
 
         public string Tags { get; set; }
 
