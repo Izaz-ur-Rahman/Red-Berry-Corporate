@@ -1,4 +1,7 @@
-﻿using RedBerryCorporate.DTOs.Blog;
+﻿using Microsoft.AspNetCore.Hosting;
+using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.Enums;
+using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces.Blog;
 using RedBerryCorporate.Models;
 
@@ -7,31 +10,55 @@ namespace RedBerryCorporate.Services
     public class BlogService : IBlogService
     {
         private readonly IBlogRepository _repository;
+        private readonly IWebHostEnvironment _environment;
 
-        public BlogService(IBlogRepository repository)
+        public BlogService(
+            IBlogRepository repository,
+            IWebHostEnvironment environment)
         {
             _repository = repository;
+            _environment = environment;
         }
 
         public async Task<BlogResponseDto> AddAsync(CreateBlogDto dto)
         {
+            string slug;
+
+            if (!string.IsNullOrWhiteSpace(dto.Slug))
+            {
+                slug = dto.Slug.Trim()
+                               .Replace(" ", "-")
+                               .ToLower();
+            }
+            else
+            {
+                slug = dto.Title.Trim()
+                                .Replace(" ", "-")
+                                .ToLower();
+            }
+
+            var imagePath = await ImageHelper.UploadBlogImageAsync(
+                dto.CoverImage,
+                _environment);
+
             var blog = new Blog
             {
                 Title = dto.Title,
                 Category = dto.Category,
                 MetaDescription = dto.MetaDescription,
                 BlogDetails = dto.BlogDetails,
-                CoverImage = dto.CoverImage,
                 Tags = dto.Tags,
 
-                Slug = dto.Slug,
+                Slug = slug,
+
+                CoverImage = imagePath,
 
                 EntryDate = DateTime.UtcNow,
                 UpdateDate = DateTime.UtcNow,
 
                 IsActive = true,
 
-                Status = Enums.BlogStatus.Draft
+                Status = BlogStatus.Draft
             };
 
             blog = await _repository.AddAsync(blog);
@@ -52,15 +79,27 @@ namespace RedBerryCorporate.Services
             blog.BlogDetails = dto.BlogDetails;
             blog.Tags = dto.Tags;
 
-            if (!string.IsNullOrWhiteSpace(dto.CoverImage))
-                blog.CoverImage = dto.CoverImage;
+            if (!string.IsNullOrWhiteSpace(dto.Slug))
+            {
+                blog.Slug = string.IsNullOrWhiteSpace(dto.Slug)
+    ? SlugHelper.Generate(dto.Title)
+    : SlugHelper.Generate(dto.Slug);
+            }
+
+            if (dto.CoverImage != null)
+            {
+                blog.CoverImage = await ImageHelper.UploadBlogImageAsync(
+                    dto.CoverImage,
+                    _environment);
+            }
 
             blog.UpdateDate = DateTime.UtcNow;
 
             blog = await _repository.UpdateAsync(blog);
 
-            return MapToDto(blog!);
+            return MapToDto(blog);
         }
+
 
         public async Task<bool> DeleteAsync(int id)
         {
@@ -122,6 +161,16 @@ namespace RedBerryCorporate.Services
                 EntryDate = blog.EntryDate,
                 PublishingDate = blog.PublishingDate
             };
+        }
+
+        public static class SlugHelper
+        {
+            public static string Generate(string text)
+            {
+                return text.Trim()
+                           .ToLower()
+                           .Replace(" ", "-");
+            }
         }
     }
 }
