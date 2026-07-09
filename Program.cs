@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RedBerryCorporate.Data;
 using RedBerryCorporate.Interfaces;
+using RedBerryCorporate.Interfaces.Blog;
 using RedBerryCorporate.Middleware;
 using RedBerryCorporate.Models;
 using RedBerryCorporate.Repository;
@@ -18,12 +19,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IBlueprintRepository, BlueprintRepository>();
-
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IBlueprintService, BlueprintService>();
+
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
 builder.Services.AddScoped<IEmailService, EmailService>();
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
