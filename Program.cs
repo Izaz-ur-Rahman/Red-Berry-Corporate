@@ -24,7 +24,7 @@ builder.Services.AddScoped<IBlueprintRepository, BlueprintRepository>();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IBlueprintService, BlueprintService>();
 builder.Services.AddScoped<ISitemapGenerator, SitemapGenerator>();
-
+builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 

@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Repository\" />
+    <Folder Include="wwwroot\uploads\blogs\" />
   </ItemGroup>
 
 </Project>
