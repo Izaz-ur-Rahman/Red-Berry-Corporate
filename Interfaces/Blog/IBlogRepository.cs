@@ -1,4 +1,5 @@
-﻿using RedBerryCorporate.Models;
+﻿using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Interfaces.Blog
 {
@@ -14,10 +15,10 @@ namespace RedBerryCorporate.Interfaces.Blog
 
         Task<Models.Blog?> GetBySlugAsync(string slug);
 
-        Task<List<Models.Blog>> GetAllAsync();
-
+        Task<(List<RedBerryCorporate.Models.Blog> Blogs, int TotalCount)> GetAllAsync(BlogQueryDto query);
         Task<List<Models.Blog>> GetPublishedAsync();
 
         Task<bool> IncrementOpenCountAsync(int id);
+        Task<bool> SlugExistsAsync(string slug, int? ignoreId = null);
     }
 }

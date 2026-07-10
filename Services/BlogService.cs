@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.Enums;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces.Blog;
+using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Services
@@ -11,13 +13,15 @@ namespace RedBerryCorporate.Services
     {
         private readonly IBlogRepository _repository;
         private readonly IWebHostEnvironment _environment;
+        private readonly ISitemapGenerator _sitemap;
 
         public BlogService(
             IBlogRepository repository,
-            IWebHostEnvironment environment)
+            IWebHostEnvironment environment,ISitemapGenerator sitemap)
         {
             _repository = repository;
             _environment = environment;
+            _sitemap = sitemap;
         }
 
         public async Task<BlogResponseDto> AddAsync(CreateBlogDto dto)
@@ -35,6 +39,11 @@ namespace RedBerryCorporate.Services
                 slug = dto.Title.Trim()
                                 .Replace(" ", "-")
                                 .ToLower();
+            }
+
+            if (await _repository.SlugExistsAsync(slug))
+            {
+                throw new Exception("Slug already exists.");
             }
 
             var imagePath = await ImageHelper.UploadBlogImageAsync(
@@ -62,7 +71,10 @@ namespace RedBerryCorporate.Services
             };
 
             blog = await _repository.AddAsync(blog);
-
+            if (blog.Status == BlogStatus.Published)
+            {
+                await _sitemap.GenerateAsync();
+            }
             return MapToDto(blog);
         }
 
@@ -86,8 +98,17 @@ namespace RedBerryCorporate.Services
     : SlugHelper.Generate(dto.Slug);
             }
 
+            if (await _repository.SlugExistsAsync(blog.Slug, blog.Id))
+            {
+                throw new Exception("Slug already exists.");
+            }
+
             if (dto.CoverImage != null)
             {
+                ImageHelper.DeleteImage(
+    blog.CoverImage,
+    _environment);
+
                 blog.CoverImage = await ImageHelper.UploadBlogImageAsync(
                     dto.CoverImage,
                     _environment);
@@ -96,23 +117,53 @@ namespace RedBerryCorporate.Services
             blog.UpdateDate = DateTime.UtcNow;
 
             blog = await _repository.UpdateAsync(blog);
-
+            if (blog.Status == BlogStatus.Published)
+            {
+                await _sitemap.GenerateAsync();
+            }
             return MapToDto(blog);
         }
 
 
         public async Task<bool> DeleteAsync(int id)
         {
-            return await _repository.DeleteAsync(id);
+            var result = await _repository.DeleteAsync(id);
+
+            if (result)
+            {
+                await _sitemap.GenerateAsync();
+            }
+
+            return result;
         }
 
-        public async Task<List<BlogResponseDto>> GetAllAsync()
+        //public async Task<List<BlogResponseDto>> GetAllAsync()
+        //{
+        //    var blogs = await _repository.GetAllAsync();
+
+        //    return blogs.Select(MapToDto).ToList();
+        //}
+
+        public async Task<PagedResponse<BlogResponseDto>> GetAllAsync(BlogQueryDto query)
         {
-            var blogs = await _repository.GetAllAsync();
+            var result = await _repository.GetAllAsync(query);
 
-            return blogs.Select(MapToDto).ToList();
+            return new PagedResponse<BlogResponseDto>
+            {
+                Data = result.Blogs.Select(MapToDto).ToList(),
+
+                PageNumber = query.PageNumber,
+
+                PageSize = query.PageSize,
+
+                TotalRecords = result.TotalCount,
+
+                TotalPages =
+                    (int)Math.Ceiling(
+                        result.TotalCount /
+                        (double)query.PageSize)
+            };
         }
-
         public async Task<List<BlogResponseDto>> GetPublishedAsync()
         {
             var blogs = await _repository.GetPublishedAsync();

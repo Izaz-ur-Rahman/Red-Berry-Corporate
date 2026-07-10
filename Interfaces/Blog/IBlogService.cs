@@ -1,4 +1,5 @@
 ﻿using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Common;
 
 namespace RedBerryCorporate.Interfaces.Blog
 {
@@ -10,8 +11,8 @@ namespace RedBerryCorporate.Interfaces.Blog
 
         Task<bool> DeleteAsync(int id);
 
-        Task<List<BlogResponseDto>> GetAllAsync();
-
+        //Task<List<BlogResponseDto>> GetAllAsync();
+        Task<PagedResponse<BlogResponseDto>> GetAllAsync(BlogQueryDto query);
         Task<List<BlogResponseDto>> GetPublishedAsync();
 
         Task<BlogResponseDto?> GetByIdAsync(int id);

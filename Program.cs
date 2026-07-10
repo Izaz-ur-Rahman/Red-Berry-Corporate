@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using RedBerryCorporate.Data;
+using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
 using RedBerryCorporate.Interfaces.Blog;
+using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Middleware;
 using RedBerryCorporate.Models;
 using RedBerryCorporate.Repository;
@@ -21,6 +23,7 @@ builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IBlueprintRepository, BlueprintRepository>();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IBlueprintService, BlueprintService>();
+builder.Services.AddScoped<ISitemapGenerator, SitemapGenerator>();
 
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
