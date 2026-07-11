@@ -11,7 +11,7 @@ namespace RedBerryCorporate.Interfaces
         Task CreateAsync(CreateUserDto dto, int createdBy);
 
         Task UpdateAsync(UpdateUserDto dto, int updatedBy);
-
+        Task<ProfileDto?> GetProfileAsync(int userId);
         Task DeleteAsync(int id, int deletedBy);
     }
 }

@@ -69,10 +69,54 @@ namespace RedBerryCorporate.Services
         }
 
         #endregion
+        #region Get My Profile
 
+        public async Task<ProfileDto?> GetProfileAsync(int userId)
+        {
+            // Get User + Employee
+            var record = await _userRepository.GetProfileAsync(userId);
+
+            if (record == null)
+                return null;
+
+            return new ProfileDto
+            {
+                UserId = record.Value.User.ID,
+
+                EmployeeId = record.Value.User.EmpId ?? 0,
+
+                UserName = record.Value.User.UserName,
+
+                Name = record.Value.Employee?.FULL_NAME,
+
+                Email = record.Value.Employee?.EMAIL_ADDRESS,
+
+                MobileNo = record.Value.Employee?.MOBILE_SMS,
+
+                WhatsappNo = record.Value.Employee?.WhatsappNo,
+
+                Position = record.Value.Employee?.Position,
+
+                Bio = record.Value.Employee?.Bio,
+
+                Languages = record.Value.Employee?.Languages,
+
+                Facebook = record.Value.Employee?.Facebook,
+
+                LinkedIn = record.Value.Employee?.LinkedIn,
+
+                Twitter = record.Value.Employee?.Twitter,
+
+                ProfileImage = record.Value.Employee?.Photo,
+
+                IsActive = record.Value.User.IsActive ?? false
+            };
+        }
+
+        #endregion
         #region Create User
 
-       
+
 
         public async Task CreateAsync(CreateUserDto dto, int createdBy)
         {

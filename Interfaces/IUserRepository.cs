@@ -39,6 +39,7 @@ namespace RedBerryCorporate.Interfaces
         Task<List<(User User, TblEmployee? Employee)>> GetUsersWithEmployeesAsync();
 
         Task<(User User, TblEmployee? Employee)?> GetUserWithEmployeeAsync(int userId);
+        Task<(User User, TblEmployee? Employee)?> GetProfileAsync(int userId);
 
         #endregion
 
