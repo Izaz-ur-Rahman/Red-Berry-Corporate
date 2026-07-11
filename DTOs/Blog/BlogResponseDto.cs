@@ -15,7 +15,7 @@
         public string CoverImage { get; set; }
 
         public string BlogDetails { get; set; }
-
+        public DateTime EntryDate { get; set; }
         public DateTime? PublishingDate { get; set; }
 
         public int? ReadTime { get; set; }
@@ -25,5 +25,6 @@
         public string Tags { get; set; }
 
         public string Status { get; set; }
+        
     }
 }

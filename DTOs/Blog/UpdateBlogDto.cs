@@ -1,4 +1,6 @@
-﻿namespace RedBerryCorporate.DTOs.Blog
+﻿using Microsoft.AspNetCore.Http;
+
+namespace RedBerryCorporate.DTOs.Blog
 {
     public class UpdateBlogDto
     {
@@ -14,6 +16,9 @@
 
         public string Tags { get; set; }
 
-        public string CoverImage { get; set; }
+        // Optional
+        public string? Slug { get; set; }
+
+        public IFormFile? CoverImage { get; set; }
     }
 }
