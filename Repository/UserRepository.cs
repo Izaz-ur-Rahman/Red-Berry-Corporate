@@ -42,24 +42,19 @@ namespace RedBerryCorporate.Repository
                 .AnyAsync(x => x.UserName == username);
         }
 
-        public async Task<User> CreateAsync(User user)
+        public async Task CreateAsync(User user)
         {
             await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
-            return user;
         }
 
-        public async Task UpdateAsync(User user)
+        public void Update(User user)
         {
             _context.Users.Update(user);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(User user)
+        public void Delete(User user)
         {
             _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
         }
 
         #endregion
@@ -78,17 +73,22 @@ namespace RedBerryCorporate.Repository
                 .FirstOrDefaultAsync(x => x.EMAIL_ADDRESS == email);
         }
 
-        public async Task<TblEmployee> CreateEmployeeAsync(TblEmployee employee)
+        public async Task CreateEmployeeAsync(TblEmployee employee)
         {
             await _context.TblEmployees.AddAsync(employee);
-            await _context.SaveChangesAsync();
-
-            return employee;
         }
 
-        public async Task UpdateEmployeeAsync(TblEmployee employee)
+        public void UpdateEmployee(TblEmployee employee)
         {
             _context.TblEmployees.Update(employee);
+        }
+
+        #endregion
+
+        #region SaveChanges
+
+        public async Task SaveChangesAsync()
+        {
             await _context.SaveChangesAsync();
         }
 

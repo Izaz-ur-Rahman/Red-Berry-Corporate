@@ -4,20 +4,40 @@ namespace RedBerryCorporate.Interfaces
 {
     public interface IUserRepository
     {
-        // User Table
+        #region User
+
         Task<List<User>> GetAllAsync();
+
         Task<User?> GetByIdAsync(int id);
+
         Task<User?> GetByUserNameAsync(string username);
+
         Task<bool> UserNameExistsAsync(string username);
 
-        Task<User> CreateAsync(User user);
-        Task UpdateAsync(User user);
-        Task DeleteAsync(User user);
+        Task CreateAsync(User user);
 
-        // Employee Table
+        void Update(User user);
+
+        void Delete(User user);
+
+        #endregion
+
+        #region Employee
+
         Task<TblEmployee?> GetEmployeeByIdAsync(int id);
-        Task<TblEmployee> CreateEmployeeAsync(TblEmployee employee);
-        Task UpdateEmployeeAsync(TblEmployee employee);
+
         Task<TblEmployee?> GetEmployeeByEmailAsync(string email);
+
+        Task CreateEmployeeAsync(TblEmployee employee);
+
+        void UpdateEmployee(TblEmployee employee);
+
+        #endregion
+
+        #region Save
+
+        Task SaveChangesAsync();
+
+        #endregion
     }
 }
