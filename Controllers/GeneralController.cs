@@ -488,15 +488,6 @@ namespace RedBerryApi.Controllers
 
                 _db.SaveChanges();
 
-                //_notificationService.Create(
-                //    "Profile Updated",
-                //    $"Profile updated for employee ID {userModal.Empid}",
-                //    "info",
-                //    "updated",
-                //    userModal.Empid.Value,
-                //    userModal.Email
-                //);
-
                 return Ok("Updated successfully");
             }
             catch (Exception ex)
@@ -575,17 +566,6 @@ namespace RedBerryApi.Controllers
                 _db.Users.Attach(user);
                 _db.Users.Remove(user);
 
-                // 🔹 Notification using NotificationService (1 line)
-                //_notificationService.Create(
-                //    "User Deleted",
-                //    $"User '{userInfo.UserName ?? "Unknown"}' (Employee ID: {userInfo.EmpId?.ToString() ?? "N/A"}) was deleted",
-                //    "danger",
-                //    "deleted",
-                //    id
-
-                //);
-
-                // 🔹 Save all changes
                 _db.SaveChanges();
 
                 return Ok(new
@@ -683,19 +663,7 @@ namespace RedBerryApi.Controllers
             var allowedRoles = new[] { "SuperAdmin", "Admin", "Agent", "Viewer" };
             return allowedRoles.Contains(role);
         }
-        //private string GetCurrentUserRole()
-        //{
-        //    return User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-        //}
-
-        //private int? GetCurrentEmpId()
-        //{
-        //    var empIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmpId")?.Value;
-        //    if (int.TryParse(empIdClaim, out int empId))
-        //        return empId;
-
-        //    return null;
-        //}
+      
 
         private int? GetCurrentUserId()
         {

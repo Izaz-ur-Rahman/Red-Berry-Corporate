@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using RedBerryCorporate.Configuration;
 using RedBerryCorporate.Data;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
@@ -8,33 +12,130 @@ using RedBerryCorporate.Middleware;
 using RedBerryCorporate.Models;
 using RedBerryCorporate.Repository;
 using RedBerryCorporate.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Controllers
+#region Controllers
+
 builder.Services.AddControllers();
 
-// Database
+#endregion
+
+#region Database
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-// add services and repositories
-builder.Services.AddScoped<IContactRepository, ContactRepository>();
-builder.Services.AddScoped<IContactService, ContactService>();
-builder.Services.AddScoped<IBlueprintRepository, BlueprintRepository>();
-builder.Services.AddScoped<IBlogRepository, BlogRepository>();
-builder.Services.AddScoped<IBlueprintService, BlueprintService>();
-builder.Services.AddScoped<ISitemapGenerator, SitemapGenerator>();
-builder.Services.AddScoped<IBlogService, BlogService>();
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+#endregion
+
+#region Configuration
+
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JwtSettings"));
+
 builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 
+#endregion
+
+#region Dependency Injection
+
+// Contact
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IContactService, ContactService>();
+
+// Blueprint
+builder.Services.AddScoped<IBlueprintRepository, BlueprintRepository>();
+builder.Services.AddScoped<IBlueprintService, BlueprintService>();
+
+// Blog
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();
+builder.Services.AddScoped<IBlogService, BlogService>();
+
+// Sitemap
+builder.Services.AddScoped<ISitemapGenerator, SitemapGenerator>();
+
+// Email
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-// Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// JWT Helper
+builder.Services.AddScoped<JwtHelper>();
 
-// CORS
+#endregion
+
+#region JWT Authentication
+
+var jwtSettings = builder.Configuration
+    .GetSection("JwtSettings")
+    .Get<JwtSettings>();
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = jwtSettings!.Issuer,
+            ValidAudience = jwtSettings.Audience,
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+#endregion
+
+#region Swagger
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "RedBerry Corporate API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter JWT Token like: Bearer {your token}",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+#endregion
+
+#region CORS
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
@@ -46,21 +147,32 @@ builder.Services.AddCors(options =>
     });
 });
 
+#endregion
+
 var app = builder.Build();
 
-// Swagger
+#region Middleware Pipeline
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
 app.UseCors("ReactPolicy");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+#endregion
 
 app.Run();

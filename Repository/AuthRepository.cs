@@ -1,6 +1,6 @@
 ﻿namespace RedBerryCorporate.Repository
 {
-    public class Class
+    public class AuthRepository
     {
     }
 }
