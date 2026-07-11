@@ -69,10 +69,188 @@ namespace RedBerryCorporate.Services
         }
 
         #endregion
+        #region Get My Profile
 
+        public async Task<ProfileDto?> GetProfileAsync(int userId)
+        {
+            // Get User + Employee
+            var record = await _userRepository.GetProfileAsync(userId);
+
+            if (record == null)
+                return null;
+
+            return new ProfileDto
+            {
+                UserId = record.Value.User.ID,
+
+                EmployeeId = record.Value.User.EmpId ?? 0,
+
+                UserName = record.Value.User.UserName,
+
+                Name = record.Value.Employee?.FULL_NAME,
+
+                Email = record.Value.Employee?.EMAIL_ADDRESS,
+
+                MobileNo = record.Value.Employee?.MOBILE_SMS,
+
+                WhatsappNo = record.Value.Employee?.WhatsappNo,
+
+                Position = record.Value.Employee?.Position,
+
+                Bio = record.Value.Employee?.Bio,
+
+                Languages = record.Value.Employee?.Languages,
+
+                Facebook = record.Value.Employee?.Facebook,
+
+                LinkedIn = record.Value.Employee?.LinkedIn,
+
+                Twitter = record.Value.Employee?.Twitter,
+
+                ProfileImage = record.Value.Employee?.Photo,
+
+                IsActive = record.Value.User.IsActive ?? false
+            };
+        }
+
+        #endregion
+        #region Update Profile
+
+        public async Task UpdateProfileAsync(UpdateProfileDto dto, int currentUserId)
+        {
+            // ===========================
+            // Get Logged-in User
+            // ===========================
+
+            var user = await _userRepository.GetByIdAsync(currentUserId);
+
+            if (user == null)
+                throw new Exception("User not found.");
+
+            if (!user.EmpId.HasValue)
+                throw new Exception("Employee record not found.");
+
+            // ===========================
+            // Get Employee
+            // ===========================
+
+            var employee =
+                await _userRepository.GetEmployeeByIdAsync(user.EmpId.Value);
+
+            if (employee == null)
+                throw new Exception("Employee not found.");
+
+            // ===========================
+            // Check Email Duplicate
+            // ===========================
+
+            if (!string.Equals(employee.EMAIL_ADDRESS, dto.Email,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                var existingEmployee =
+                    await _userRepository.GetEmployeeByEmailAsync(dto.Email);
+
+                if (existingEmployee != null &&
+                    existingEmployee.ID != employee.ID)
+                {
+                    throw new Exception("Email already exists.");
+                }
+            }
+
+            // ===========================
+            // Update Employee Information
+            // ===========================
+
+            employee.FULL_NAME = dto.Name;
+            employee.EMAIL_ADDRESS = dto.Email;
+
+            employee.MOBILE_SMS = dto.MobileNo;
+            employee.WhatsappNo = dto.WhatsappNo;
+
+            employee.Bio = dto.Bio;
+            employee.LinkedIn = dto.LinkedIn;
+            employee.Facebook = dto.Facebook;
+            employee.Twitter = dto.Twitter;
+
+            employee.Languages = dto.Languages;
+
+            employee.UpdatedBy = currentUserId;
+            employee.UpdatedDate = DateTime.UtcNow;
+
+            _userRepository.UpdateEmployee(employee);
+
+            await _userRepository.SaveChangesAsync();
+        }
+
+        #endregion
+        #region Change Password
+
+        public async Task ChangePasswordAsync(
+            int userId,
+            ChangePasswordDto dto)
+        {
+            // ============================
+            // Get User
+            // ============================
+
+            var user =
+                await _userRepository.GetByIdAsync(userId);
+
+            if (user == null)
+                throw new Exception("User not found.");
+
+            // ============================
+            // Verify Old Password
+            // ============================
+
+            bool passwordMatched = false;
+
+            // New PBKDF2 Password
+            if (!string.IsNullOrWhiteSpace(user.Password)
+                && user.Password.Contains(":"))
+            {
+                passwordMatched =
+                    EncryptionHelper.VerifyPassword(
+                        dto.OldPassword,
+                        user.Password);
+            }
+            else
+            {
+                // Legacy SHA1 Password
+                passwordMatched =
+                    EncryptionHelper.EncrptPassword(dto.OldPassword)
+                    == user.Password;
+            }
+
+            if (!passwordMatched)
+                throw new Exception("Old password is incorrect.");
+
+            // ============================
+            // Prevent Same Password
+            // ============================
+
+            if (dto.OldPassword == dto.NewPassword)
+                throw new Exception("New password must be different from old password.");
+
+            // ============================
+            // Save New Password
+            // ============================
+
+            user.Password =
+                EncryptionHelper.HashPassword(dto.NewPassword);
+
+            user.UpdatedDate = DateTime.UtcNow;
+            user.UpdatedBy = userId;
+
+            _userRepository.Update(user);
+
+            await _userRepository.SaveChangesAsync();
+        }
+
+        #endregion
         #region Create User
 
-       
+
 
         public async Task CreateAsync(CreateUserDto dto, int createdBy)
         {

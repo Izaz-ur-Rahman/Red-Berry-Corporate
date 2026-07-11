@@ -27,7 +27,7 @@ namespace RedBerryCorporate.Interfaces
         Task<TblEmployee?> GetEmployeeByIdAsync(int id);
 
         Task<TblEmployee?> GetEmployeeByEmailAsync(string email);
-
+        Task<User?> GetUserByEmployeeIdAsync(int employeeId);
         Task CreateEmployeeAsync(TblEmployee employee);
 
         void UpdateEmployee(TblEmployee employee);
@@ -39,6 +39,7 @@ namespace RedBerryCorporate.Interfaces
         Task<List<(User User, TblEmployee? Employee)>> GetUsersWithEmployeesAsync();
 
         Task<(User User, TblEmployee? Employee)?> GetUserWithEmployeeAsync(int userId);
+        Task<(User User, TblEmployee? Employee)?> GetProfileAsync(int userId);
 
         #endregion
 

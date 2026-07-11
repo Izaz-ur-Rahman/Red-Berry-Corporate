@@ -8,7 +8,7 @@ namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+  //  [Authorize]
     public class UserController : BaseApiController
     {
         private readonly IUserService _userService;
@@ -60,13 +60,76 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+        #region My Profile
 
+        [Authorize]
+        [HttpGet("Profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var currentUserId = GetCurrentUserIdOrThrow();
+
+            var profile = await _userService.GetProfileAsync(currentUserId);
+
+            if (profile == null)
+            {
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = "Profile not found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile retrieved successfully.",
+                Data = profile
+            });
+        }
+
+        #endregion
+        #region Update My Profile
+
+        [Authorize]
+        [HttpPut("Profile")]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileDto dto)
+        {
+            var currentUserId = GetCurrentUserIdOrThrow();
+
+            await _userService.UpdateProfileAsync(dto, currentUserId);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile updated successfully."
+            });
+        }
+
+        #endregion
+        #region Change Password
+
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        {
+            var currentUserId = GetCurrentUserIdOrThrow();
+
+            await _userService.ChangePasswordAsync(currentUserId, dto);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Password changed successfully."
+            });
+        }
+
+        #endregion
         #region Create User
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserDto dto)
         {
-            var currentUserId = GetCurrentUserIdOrThrow();
+            //var currentUserId = GetCurrentUserIdOrThrow();
+            var currentUserId = 1;
 
             await _userService.CreateAsync(dto, currentUserId);
 

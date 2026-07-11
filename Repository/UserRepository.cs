@@ -138,7 +138,42 @@ namespace RedBerryCorporate.Repository
 
             return (result.User, result.Employee);
         }
+        public async Task<(User User, TblEmployee? Employee)?> GetProfileAsync(int userId)
+        {
+            var result =
+                await
+                (
+                    from user in _context.Users
 
+                    join employee in _context.TblEmployees
+                    on user.EmpId equals employee.ID
+                    into employeeGroup
+
+                    from employee in employeeGroup.DefaultIfEmpty()
+
+                    where user.ID == userId
+                          && user.IsActive == true
+
+                    select new
+                    {
+                        User = user,
+                        Employee = employee
+                    }
+                ).FirstOrDefaultAsync();
+
+            if (result == null)
+                return null;
+
+            return (result.User, result.Employee);
+        }
+
+        public async Task<User?> GetUserByEmployeeIdAsync(int employeeId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(x =>
+                    x.EmpId == employeeId &&
+                    x.IsActive == true);
+        }
         #endregion
 
         #region SaveChanges
