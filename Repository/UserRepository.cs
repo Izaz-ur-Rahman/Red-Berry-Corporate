@@ -85,6 +85,59 @@ namespace RedBerryCorporate.Repository
 
         #endregion
 
+        #region Joined Data
+
+        public async Task<List<(User User, TblEmployee? Employee)>> GetUsersWithEmployeesAsync()
+        {
+            var result = await
+                (from user in _context.Users
+
+                 join employee in _context.TblEmployees
+                 on user.EmpId equals employee.ID
+                 into employeeGroup
+
+                 from employee in employeeGroup.DefaultIfEmpty()
+
+                 orderby user.ID descending
+
+                 select new
+                 {
+                     User = user,
+                     Employee = employee
+                 }).ToListAsync();
+
+            return result
+                .Select(x => (x.User, x.Employee))
+                .ToList();
+        }
+
+        public async Task<(User User, TblEmployee? Employee)?> GetUserWithEmployeeAsync(int userId)
+        {
+            var result = await
+                (from user in _context.Users
+
+                 join employee in _context.TblEmployees
+                 on user.EmpId equals employee.ID
+                 into employeeGroup
+
+                 from employee in employeeGroup.DefaultIfEmpty()
+
+                 where user.ID == userId
+
+                 select new
+                 {
+                     User = user,
+                     Employee = employee
+                 }).FirstOrDefaultAsync();
+
+            if (result == null)
+                return null;
+
+            return (result.User, result.Employee);
+        }
+
+        #endregion
+
         #region SaveChanges
 
         public async Task SaveChangesAsync()

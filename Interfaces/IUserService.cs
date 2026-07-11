@@ -8,10 +8,10 @@ namespace RedBerryCorporate.Interfaces
 
         Task<UserDto?> GetByIdAsync(int id);
 
-        Task<bool> CreateAsync(CreateUserDto dto, int createdBy);
+        Task CreateAsync(CreateUserDto dto, int createdBy);
 
-        Task<bool> UpdateAsync(UpdateUserDto dto, int updatedBy);
+        Task UpdateAsync(UpdateUserDto dto, int updatedBy);
 
-        Task<bool> DeleteAsync(int id);
+        Task DeleteAsync(int id, int deletedBy);
     }
 }

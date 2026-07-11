@@ -34,6 +34,14 @@ namespace RedBerryCorporate.Interfaces
 
         #endregion
 
+        #region Joined Data
+
+        Task<List<(User User, TblEmployee? Employee)>> GetUsersWithEmployeesAsync();
+
+        Task<(User User, TblEmployee? Employee)?> GetUserWithEmployeeAsync(int userId);
+
+        #endregion
+
         #region Save
 
         Task SaveChangesAsync();
