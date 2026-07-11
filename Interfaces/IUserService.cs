@@ -17,5 +17,11 @@ namespace RedBerryCorporate.Interfaces
         Task ChangePasswordAsync(
     int userId,
     ChangePasswordDto dto);
+
+
+        Task UploadProfileImageAsync(
+    UploadProfileImageDto dto,
+    int currentUserId);
     }
+
 }
