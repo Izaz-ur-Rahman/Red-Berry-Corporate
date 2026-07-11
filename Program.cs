@@ -63,6 +63,10 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // JWT Helper
 builder.Services.AddScoped<JwtHelper>();
 
+// login
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 #endregion
 
 #region JWT Authentication

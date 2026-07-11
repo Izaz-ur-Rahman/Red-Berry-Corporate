@@ -1,6 +1,9 @@
-﻿namespace RedBerryCorporate.Interfaces
+﻿using RedBerryCorporate.DTOs.Auth;
+
+namespace RedBerryCorporate.Interfaces
 {
-    public class IAuthService
+    public interface IAuthService
     {
+        Task<LoginResponseDto> LoginAsync(LoginDto dto);
     }
 }
