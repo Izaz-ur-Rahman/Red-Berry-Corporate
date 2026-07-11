@@ -4,20 +4,13 @@ namespace RedBerryCorporate.DTOs.User
 {
     public class CreateUserDto
     {
-        [Required]
-        [MaxLength(150)]
-        public string Name { get; set; }
+        public string UserName { get; set; }
 
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [MinLength(5)]
         public string Password { get; set; }
 
-        [Required]
-        public string Role { get; set; }
+        public string Name { get; set; }
+
+        public string Email { get; set; }
 
         public string MobileNo { get; set; }
 
@@ -25,8 +18,8 @@ namespace RedBerryCorporate.DTOs.User
 
         public string Languages { get; set; }
 
-        public string ReraNumber { get; set; }
+        public string Role { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; }
     }
 }
