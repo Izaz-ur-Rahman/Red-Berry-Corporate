@@ -88,7 +88,41 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+        #region Update My Profile
 
+        [Authorize]
+        [HttpPut("Profile")]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileDto dto)
+        {
+            var currentUserId = GetCurrentUserIdOrThrow();
+
+            await _userService.UpdateProfileAsync(dto, currentUserId);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile updated successfully."
+            });
+        }
+
+        #endregion
+        #region Change Password
+
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        {
+            var currentUserId = GetCurrentUserIdOrThrow();
+
+            await _userService.ChangePasswordAsync(currentUserId, dto);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Password changed successfully."
+            });
+        }
+
+        #endregion
         #region Create User
         [AllowAnonymous]
         [HttpPost]

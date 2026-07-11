@@ -166,6 +166,14 @@ namespace RedBerryCorporate.Repository
 
             return (result.User, result.Employee);
         }
+
+        public async Task<User?> GetUserByEmployeeIdAsync(int employeeId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(x =>
+                    x.EmpId == employeeId &&
+                    x.IsActive == true);
+        }
         #endregion
 
         #region SaveChanges
