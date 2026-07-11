@@ -1,12 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RedBerryCorporate.DTOs.Auth;
+using RedBerryCorporate.Interfaces;
 
 namespace RedBerryCorporate.Controllers
 {
-    public class AuthController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
-        public IActionResult Index()
+        private readonly IAuthService _service;
+
+        public AuthController(IAuthService service)
         {
-            return View();
+            _service = service;
+        }
+
+        /// <summary>
+        /// User Login
+        /// </summary>
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginDto dto)
+        {
+            var result = await _service.LoginAsync(dto);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Login Successful",
+                Data = result
+            });
         }
     }
 }
