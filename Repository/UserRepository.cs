@@ -19,6 +19,7 @@ namespace RedBerryCorporate.Repository
         public async Task<List<User>> GetAllAsync()
         {
             return await _context.Users
+                .Where(x => x.IsActive == true)
                 .AsNoTracking()
                 .OrderByDescending(x => x.ID)
                 .ToListAsync();
@@ -91,6 +92,7 @@ namespace RedBerryCorporate.Repository
         {
             var result = await
                 (from user in _context.Users
+                 where user.IsActive == true
 
                  join employee in _context.TblEmployees
                  on user.EmpId equals employee.ID
@@ -123,6 +125,7 @@ namespace RedBerryCorporate.Repository
                  from employee in employeeGroup.DefaultIfEmpty()
 
                  where user.ID == userId
+                 && user.IsActive == true
 
                  select new
                  {
