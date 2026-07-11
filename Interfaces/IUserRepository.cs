@@ -1,19 +1,23 @@
-﻿using RedBerryCorporate.DTOs.User;
+﻿using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Interfaces
 {
     public interface IUserRepository
     {
-        Task<List<UserListDto>> GetAllAsync();
+        Task<List<User>> GetAllAsync();
 
-        Task<UserDto?> GetByIdAsync(int id);
+        Task<User?> GetByIdAsync(int id);
 
-        Task<bool> CreateAsync(CreateUserDto dto, int createdBy);
+        Task<User?> GetByUserNameAsync(string username);
 
-        Task<bool> UpdateAsync(UpdateUserDto dto, int updatedBy);
+        Task<bool> UserNameExistsAsync(string username);
 
-        Task<bool> DeleteAsync(int id);
+        Task<bool> EmployeeExistsAsync(int empId);
 
-        Task<bool> UserNameExistsAsync(string email);
+        Task<User> CreateAsync(User user);
+
+        Task UpdateAsync(User user);
+
+        Task DeleteAsync(User user);
     }
 }

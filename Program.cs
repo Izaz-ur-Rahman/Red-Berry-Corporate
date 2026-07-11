@@ -67,6 +67,8 @@ builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+// user 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 #endregion
 
 #region JWT Authentication
