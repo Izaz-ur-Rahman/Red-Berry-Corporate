@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RedBerryCorporate.DTOs.Blueprint;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
@@ -6,7 +7,9 @@ using RedBerryCorporate.Interfaces;
 namespace RedBerryCorporate.Controllers
 {
     [ApiController]
+
     [Route("api/[controller]")]
+    [Authorize]
     public class BlueprintController : ControllerBase
     {
         private readonly IBlueprintService _service;
@@ -17,7 +20,7 @@ namespace RedBerryCorporate.Controllers
         }
 
         #region Create Blueprint
-
+        [AllowAnonymous]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] BlueprintCreateDto dto)
         {
