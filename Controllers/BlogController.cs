@@ -2,11 +2,13 @@
 using RedBerryApi.Controllers;
 using RedBerryCorporate.DTOs.Blog;
 using RedBerryCorporate.Interfaces.Blog;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class BlogController : BaseApiController
     {
         private readonly IBlogService _blogService;
@@ -197,7 +199,16 @@ namespace RedBerryCorporate.Controllers
         [HttpPost("Schedule")]
         public async Task<IActionResult> Schedule(ScheduleBlogDto dto)
         {
-            var result = await _blogService.ScheduleAsync(dto);
+
+            // Temporary until JWT is enabled
+            //int currentUserId = 1;
+
+            // Later replace with:
+             var currentUserId = GetCurrentUserIdOrThrow();
+
+            var result = await _blogService.ScheduleAsync(
+                dto,
+                currentUserId);
 
             if (!result)
             {

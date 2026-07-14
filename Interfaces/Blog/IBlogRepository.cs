@@ -32,5 +32,6 @@ namespace RedBerryCorporate.Interfaces.Blog
         Task<bool> IncrementOpenCountAsync(int id);
 
         Task<bool> SlugExistsAsync(string slug, int? ignoreId = null);
+        Task PublishScheduledBlogAsync(BlogEntity blog);
     }
 }

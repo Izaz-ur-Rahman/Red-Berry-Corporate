@@ -39,6 +39,9 @@ namespace RedBerryCorporate.Interfaces.Blog
         Task<BlogResponseDto?> GetBySlugAsync(string slug);
 
         Task<bool> IncrementOpenCountAsync(int id);
+        Task<bool> ScheduleAsync(
+    ScheduleBlogDto dto,
+    int currentUserId);
 
     }
 }

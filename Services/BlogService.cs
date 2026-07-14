@@ -302,7 +302,30 @@ namespace RedBerryCorporate.Services
                 OpenCount = blog.OpenCount
             };
         }
+        public async Task<bool> ScheduleAsync(
+    ScheduleBlogDto dto,
+    int currentUserId)
+        {
+            var blog = await _repository.GetByIdAsync(dto.BlogId);
 
+            if (blog == null)
+                return false;
+
+            if (dto.PublishingDate <= DateTime.UtcNow)
+                throw new Exception("Publishing date must be in the future.");
+
+            blog.Status = BlogStatus.Scheduled;
+
+            blog.PublishingDate = dto.PublishingDate;
+
+            blog.UpdatedAt = DateTime.UtcNow;
+
+            blog.UpdatedByUserId = currentUserId;
+
+            await _repository.UpdateAsync(blog);
+
+            return true;
+        }
         public static class SlugHelper
         {
             public static string Generate(string text)

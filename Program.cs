@@ -71,6 +71,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<FileHelper>();
+builder.Services.AddHostedService<ScheduledBlogPublisher>();
 #endregion
 
 #region JWT Authentication

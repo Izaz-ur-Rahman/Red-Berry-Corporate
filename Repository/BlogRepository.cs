@@ -247,5 +247,11 @@ namespace RedBerryCorporate.Repository
      x.Slug.ToLower() == slug &&
      (!ignoreId.HasValue || x.Id != ignoreId));
         }
+
+        public async Task PublishScheduledBlogAsync(Blog blog)
+        {
+            _context.Blogs.Update(blog);
+            await _context.SaveChangesAsync();
+        }
     }
 }
