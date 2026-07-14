@@ -29,7 +29,7 @@ namespace RedBerryCorporate.Helpers
 
             await file.CopyToAsync(stream);
 
-            return $"uploads/blogs/{fileName}";
+            return $"/uploads/blogs/{fileName}";
         }
 
         public static void DeleteImage(string imagePath, IWebHostEnvironment env)

@@ -1,4 +1,5 @@
 ﻿using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.DTOs.Common;
 
 namespace RedBerryCorporate.Interfaces.Blog
@@ -42,6 +43,8 @@ namespace RedBerryCorporate.Interfaces.Blog
         Task<bool> ScheduleAsync(
     ScheduleBlogDto dto,
     int currentUserId);
+
+        Task<BlogViewerResponseDto?> ViewAsync(string slug);
 
     }
 }
