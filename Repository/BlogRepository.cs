@@ -32,37 +32,118 @@ namespace RedBerryCorporate.Repository
             return blog;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, int deletedByUserId)
         {
-            var blog = await _context.Blogs.FindAsync(id);
+            var blog = await _context.Blogs.FirstOrDefaultAsync(x => x.Id == id);
 
             if (blog == null)
                 return false;
 
+            blog.IsDeleted = true;
+
             blog.IsActive = false;
 
-            _context.Blogs.Update(blog);
+            blog.DeletedAt = DateTime.UtcNow;
+
+            blog.DeletedByUserId = deletedByUserId;
 
             await _context.SaveChangesAsync();
-           
 
             return true;
         }
+        public async Task<bool> PublishAsync(int id, int publishedByUserId)
+        {
+            var blog = await _context.Blogs
+                .FirstOrDefaultAsync(x => x.Id == id);
 
+            if (blog == null)
+                return false;
+
+            blog.Status = BlogStatus.Published;
+
+            blog.PublishingDate = DateTime.UtcNow;
+
+            blog.PublishedAt = DateTime.UtcNow;
+
+            blog.PublishedByUserId = publishedByUserId;
+
+            blog.UpdatedAt = DateTime.UtcNow;
+
+            blog.UpdatedByUserId = publishedByUserId;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        public async Task<bool> ArchiveAsync(int id, int updatedByUserId)
+        {
+            var blog = await _context.Blogs
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (blog == null)
+                return false;
+
+            blog.Status = BlogStatus.Archived;
+
+            blog.UpdatedAt = DateTime.UtcNow;
+
+            blog.UpdatedByUserId = updatedByUserId;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        public async Task<bool> RestoreAsync(int id, int updatedByUserId)
+        {
+            var blog = await _context.Blogs
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (blog == null)
+                return false;
+
+            blog.IsDeleted = false;
+
+            blog.IsActive = true;
+
+            blog.DeletedAt = null;
+
+            blog.DeletedByUserId = null;
+
+            blog.UpdatedAt = DateTime.UtcNow;
+
+            blog.UpdatedByUserId = updatedByUserId;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        public async Task<List<Blog>> GetScheduledBlogsAsync()
+        {
+            return await _context.Blogs
+                .Where(x =>
+                    !x.IsDeleted &&
+                    x.IsActive &&
+                    x.Status == BlogStatus.Scheduled &&
+                    x.PublishingDate <= DateTime.UtcNow)
+                .ToListAsync();
+        }
         public async Task<Blog?> GetByIdAsync(int id)
         {
             return await _context.Blogs
-                .FirstOrDefaultAsync(x =>
-    x.Id == id &&
-    x.IsActive);
+      .FirstOrDefaultAsync(x =>
+          x.Id == id &&
+          !x.IsDeleted &&
+          x.IsActive);
         }
 
         public async Task<Blog?> GetBySlugAsync(string slug)
         {
             return await _context.Blogs
-               .FirstOrDefaultAsync(x =>
-    x.Slug == slug &&
-    x.IsActive);
+      .FirstOrDefaultAsync(x =>
+          x.Slug == slug &&
+          !x.IsDeleted &&
+          x.IsActive &&
+          x.Status == BlogStatus.Published);
         }
 
         //public async Task<List<Blog>> GetAllAsync()
@@ -74,7 +155,7 @@ namespace RedBerryCorporate.Repository
         public async Task<(List<Blog> Blogs, int TotalCount)> GetAllAsync(BlogQueryDto query)
         {
             IQueryable<Blog> blogs =
-      _context.Blogs.Where(x => x.IsActive);
+      _context.Blogs.Where(x => !x.IsDeleted && x.IsActive);
 
             //------------------------------------
             // Search
@@ -111,8 +192,8 @@ namespace RedBerryCorporate.Repository
             //------------------------------------
 
             blogs = query.SortBy.ToLower() == "oldest"
-                ? blogs.OrderBy(x => x.EntryDate)
-                : blogs.OrderByDescending(x => x.EntryDate);
+     ? blogs.OrderBy(x => x.CreatedAt)
+     : blogs.OrderByDescending(x => x.CreatedAt);
 
             //------------------------------------
             // Total Count
@@ -134,11 +215,12 @@ namespace RedBerryCorporate.Repository
         public async Task<List<Blog>> GetPublishedAsync()
         {
             return await _context.Blogs
-             .Where(x =>
-    x.IsActive &&
-    x.Status == BlogStatus.Published)
-                .OrderByDescending(x => x.PublishingDate)
-                .ToListAsync();
+     .Where(x =>
+         !x.IsDeleted &&
+         x.IsActive &&
+         x.Status == BlogStatus.Published)
+     .OrderByDescending(x => x.PublishingDate)
+     .ToListAsync();
         }
 
         public async Task<bool> IncrementOpenCountAsync(int id)
@@ -161,8 +243,15 @@ namespace RedBerryCorporate.Repository
             slug = slug.ToLower().Trim();
 
             return await _context.Blogs.AnyAsync(x =>
-                x.Slug.ToLower() == slug &&
-                (!ignoreId.HasValue || x.Id != ignoreId));
+     !x.IsDeleted &&
+     x.Slug.ToLower() == slug &&
+     (!ignoreId.HasValue || x.Id != ignoreId));
+        }
+
+        public async Task PublishScheduledBlogAsync(Blog blog)
+        {
+            _context.Blogs.Update(blog);
+            await _context.SaveChangesAsync();
         }
     }
 }

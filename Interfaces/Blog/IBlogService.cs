@@ -5,14 +5,33 @@ namespace RedBerryCorporate.Interfaces.Blog
 {
     public interface IBlogService
     {
-        Task<BlogResponseDto> AddAsync(CreateBlogDto dto);
+        Task<BlogResponseDto> AddAsync(
+            CreateBlogDto dto,
+            int currentUserId);
 
-        Task<BlogResponseDto?> UpdateAsync(UpdateBlogDto dto);
+        Task<BlogResponseDto?> UpdateAsync(
+            UpdateBlogDto dto,
+            int currentUserId);
 
-        Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAsync(
+            int id,
+            int currentUserId);
 
-        //Task<List<BlogResponseDto>> GetAllAsync();
-        Task<PagedResponse<BlogResponseDto>> GetAllAsync(BlogQueryDto query);
+        Task<bool> PublishAsync(
+            int id,
+            int currentUserId);
+
+        Task<bool> ArchiveAsync(
+            int id,
+            int currentUserId);
+
+        Task<bool> RestoreAsync(
+            int id,
+            int currentUserId);
+
+        Task<PagedResponse<BlogResponseDto>> GetAllAsync(
+            BlogQueryDto query);
+
         Task<List<BlogResponseDto>> GetPublishedAsync();
 
         Task<BlogResponseDto?> GetByIdAsync(int id);
@@ -20,5 +39,9 @@ namespace RedBerryCorporate.Interfaces.Blog
         Task<BlogResponseDto?> GetBySlugAsync(string slug);
 
         Task<bool> IncrementOpenCountAsync(int id);
+        Task<bool> ScheduleAsync(
+    ScheduleBlogDto dto,
+    int currentUserId);
+
     }
 }

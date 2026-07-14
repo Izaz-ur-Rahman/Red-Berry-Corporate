@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RedBerryApi.Controllers;
 using RedBerryCorporate.DTOs.Blog;
 using RedBerryCorporate.Interfaces.Blog;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BlogController : ControllerBase
+
+    public class BlogController : BaseApiController
     {
         private readonly IBlogService _blogService;
 
@@ -20,80 +23,70 @@ namespace RedBerryCorporate.Controllers
         [HttpPost("Add")]
         public async Task<IActionResult> Add([FromForm] CreateBlogDto dto)
         {
-            try
-            {
-                var result = await _blogService.AddAsync(dto);
+            var currentUserId = GetCurrentUserIdOrThrow();
 
-                return Ok(new
-                {
-                    Success = true,
-                    Message = "Blog created successfully.",
-                    Data = result
-                });
-            }
-            catch (Exception ex)
+            // Until JWT is enabled you may temporarily use:
+            // var currentUserId = 1;
+
+            var result = await _blogService.AddAsync(
+                dto,
+                currentUserId);
+
+            return Ok(new
             {
-                return BadRequest(new
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
-            }
+                Success = true,
+                Message = "Blog created successfully.",
+                Data = result
+            });
         }
 
         #endregion
 
         #region Update Blog
 
-        // POST used intentionally (instead of PUT)
-        // because some hosting/server proxy configurations
-        // block PUT requests.
-
         [HttpPost("Update")]
         public async Task<IActionResult> Update([FromForm] UpdateBlogDto dto)
         {
-            try
-            {
-                var result = await _blogService.UpdateAsync(dto);
+            var currentUserId = GetCurrentUserIdOrThrow();
 
-                if (result == null)
-                {
-                    return NotFound(new
-                    {
-                        Success = false,
-                        Message = "Blog not found."
-                    });
-                }
+            // Temporary
+            // var currentUserId = 1;
 
-                return Ok(new
-                {
-                    Success = true,
-                    Message = "Blog updated successfully.",
-                    Data = result
-                });
-            }
-            catch (Exception ex)
+            var result = await _blogService.UpdateAsync(
+                dto,
+                currentUserId);
+            if (result == null)
             {
-                return BadRequest(new
+                return NotFound(new
                 {
                     Success = false,
-                    Message = ex.Message
+                    Message = "Blog not found."
                 });
             }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Blog updated successfully.",
+                Data = result
+            });
         }
 
         #endregion
 
         #region Delete Blog
 
-        // POST used intentionally
-        // because DELETE sometimes causes proxy/server issues.
-
-        [HttpPost("Delete")]
+        [HttpPost("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _blogService.DeleteAsync(id);
+            var currentUserId = GetCurrentUserIdOrThrow();
 
+            // Temporary
+            // var currentUserId = 1;
+
+            var result = await _blogService.DeleteAsync(
+                id,
+                currentUserId);
             if (!result)
             {
                 return NotFound(new
@@ -111,7 +104,129 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+        #region Publish Blog
 
+        [HttpPost("Publish/{id}")]
+        public async Task<IActionResult> Publish(int id)
+        {
+            var currentUserId = GetCurrentUserIdOrThrow();
+
+            // Temporary
+            // var currentUserId = 1;
+
+            var result = await _blogService.PublishAsync(
+                id,
+                currentUserId);
+            if (!result)
+            {
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = "Blog not found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Blog published successfully."
+            });
+        }
+
+        #endregion
+        #region Archive Blog
+
+        [HttpPost("Archive/{id}")]
+        public async Task<IActionResult> Archive(int id)
+        {
+            var currentUserId = GetCurrentUserIdOrThrow();
+
+            // Temporary
+            // var currentUserId = 1;
+
+            var result = await _blogService.ArchiveAsync(
+                id,
+                currentUserId);
+            if (!result)
+            {
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = "Blog not found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Blog archived successfully."
+            });
+        }
+
+        #endregion
+        #region Restore Blog
+
+        [HttpPost("Restore/{id}")]
+        public async Task<IActionResult> Restore(int id)
+        {
+            var currentUserId = GetCurrentUserIdOrThrow();
+
+            // Temporary
+            // var currentUserId = 1;
+
+            var result = await _blogService.RestoreAsync(
+                id,
+                currentUserId);
+            if (!result)
+            {
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = "Blog not found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Blog restored successfully."
+            });
+        }
+
+        #endregion
+        #region Schedule Blog
+
+        [HttpPost("Schedule")]
+        public async Task<IActionResult> Schedule(ScheduleBlogDto dto)
+        {
+
+            // Temporary until JWT is enabled
+            //int currentUserId = 1;
+
+            // Later replace with:
+             var currentUserId = GetCurrentUserIdOrThrow();
+
+            var result = await _blogService.ScheduleAsync(
+                dto,
+                currentUserId);
+
+            if (!result)
+            {
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = "Blog not found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Blog scheduled successfully."
+            });
+        }
+
+        #endregion
         #region Get All Blogs (Pagination)
 
         [HttpGet("List")]

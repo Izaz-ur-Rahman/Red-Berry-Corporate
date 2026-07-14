@@ -16,31 +16,58 @@ namespace RedBerryCorporate.Models
         public string Slug { get; set; }
 
         [MaxLength(100)]
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         [MaxLength(500)]
-        public string MetaDescription { get; set; }
+        public string? MetaDescription { get; set; }
 
-        public string CoverImage { get; set; }
+        public string? CoverImage { get; set; }
 
-        public string BlogDetails { get; set; }
+        public string? BlogDetails { get; set; }
 
-        public string Tags { get; set; }
+        public string? Tags { get; set; }
 
-        public DateTime EntryDate { get; set; } = DateTime.UtcNow;
-
-        public DateTime? UpdateDate { get; set; }
-
-        public DateTime? PublishingDate { get; set; }
-
-        public string CreatedBy { get; set; }
+        //--------------------------------------------------
+        // Blog Workflow
+        //--------------------------------------------------
 
         public BlogStatus Status { get; set; } = BlogStatus.Draft;
 
-        public bool IsActive { get; set; } = true;
+        public DateTime? PublishingDate { get; set; }
+
+        public int OpenCount { get; set; }
 
         public int ReadTime { get; set; }
 
-        public int OpenCount { get; set; }
+
+        //--------------------------------------------------
+        // Audit Fields
+        //--------------------------------------------------
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public int CreatedByUserId { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        public int? UpdatedByUserId { get; set; }
+
+        public DateTime? PublishedAt { get; set; }
+
+        public int? PublishedByUserId { get; set; }
+        //--------------------------------------------------
+        // Soft Delete
+        //--------------------------------------------------
+
+        public bool IsDeleted { get; set; } = false;
+
+        public DateTime? DeletedAt { get; set; }
+
+        public int? DeletedByUserId { get; set; }
+        public bool IsActive { get; set; } = true;
+
+    
+
+    
     }
 }
