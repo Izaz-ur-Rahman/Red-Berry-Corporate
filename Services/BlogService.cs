@@ -24,61 +24,79 @@ namespace RedBerryCorporate.Services
             _sitemap = sitemap;
         }
 
-        public async Task<BlogResponseDto> AddAsync(CreateBlogDto dto)
+        public async Task<BlogResponseDto> AddAsync(
+        CreateBlogDto dto,
+        int currentUserId)
         {
-            string slug;
-
-            if (!string.IsNullOrWhiteSpace(dto.Slug))
-            {
-                slug = dto.Slug.Trim()
-                               .Replace(" ", "-")
-                               .ToLower();
-            }
-            else
-            {
-                slug = dto.Title.Trim()
-                                .Replace(" ", "-")
-                                .ToLower();
-            }
+            var slug =
+                string.IsNullOrWhiteSpace(dto.Slug)
+                ? SlugHelper.Generate(dto.Title)
+                : SlugHelper.Generate(dto.Slug);
 
             if (await _repository.SlugExistsAsync(slug))
-            {
                 throw new Exception("Slug already exists.");
-            }
 
-            var imagePath = await ImageHelper.UploadBlogImageAsync(
-                dto.CoverImage,
-                _environment);
+            var image =
+                await ImageHelper.UploadBlogImageAsync(
+                    dto.CoverImage,
+                    _environment);
 
             var blog = new Blog
             {
                 Title = dto.Title,
+                Slug = slug,
                 Category = dto.Category,
                 MetaDescription = dto.MetaDescription,
                 BlogDetails = dto.BlogDetails,
                 Tags = dto.Tags,
+                CoverImage = image,
 
-                Slug = slug,
+                ReadTime = CalculateReadTime(dto.BlogDetails),
 
-                CoverImage = imagePath,
-
-                //EntryDate = DateTime.UtcNow,
-                //UpdateDate = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                CreatedByUserId = currentUserId,
 
                 IsActive = true,
-
-                Status = BlogStatus.Draft
+                IsDeleted = false
             };
 
-            blog = await _repository.AddAsync(blog);
-            if (blog.Status == BlogStatus.Published)
+            //-----------------------------------
+            // Workflow
+            //-----------------------------------
+
+            if (dto.PublishingDate.HasValue)
             {
-                await _sitemap.GenerateAsync();
+                if (dto.PublishingDate <= DateTime.UtcNow)
+                {
+                    blog.Status = BlogStatus.Published;
+
+                    blog.PublishingDate = DateTime.UtcNow;
+                    blog.PublishedAt = DateTime.UtcNow;
+                    blog.PublishedByUserId = currentUserId;
+                }
+                else
+                {
+                    blog.Status = BlogStatus.Scheduled;
+
+                    blog.PublishingDate = dto.PublishingDate;
+                }
             }
+            else
+            {
+                blog.Status = BlogStatus.Draft;
+            }
+
+            blog = await _repository.AddAsync(blog);
+
+            if (blog.Status == BlogStatus.Published)
+                await _sitemap.GenerateAsync();
+
             return MapToDto(blog);
         }
 
-        public async Task<BlogResponseDto?> UpdateAsync(UpdateBlogDto dto)
+        public async Task<BlogResponseDto?> UpdateAsync(
+      UpdateBlogDto dto,
+      int currentUserId)
         {
             var blog = await _repository.GetByIdAsync(dto.Id);
 
@@ -91,50 +109,114 @@ namespace RedBerryCorporate.Services
             blog.BlogDetails = dto.BlogDetails;
             blog.Tags = dto.Tags;
 
-            if (!string.IsNullOrWhiteSpace(dto.Slug))
-            {
-                blog.Slug = string.IsNullOrWhiteSpace(dto.Slug)
-    ? SlugHelper.Generate(dto.Title)
-    : SlugHelper.Generate(dto.Slug);
-            }
+            blog.ReadTime =
+                CalculateReadTime(dto.BlogDetails);
+
+            blog.Slug =
+                string.IsNullOrWhiteSpace(dto.Slug)
+                ? SlugHelper.Generate(dto.Title)
+                : SlugHelper.Generate(dto.Slug);
 
             if (await _repository.SlugExistsAsync(blog.Slug, blog.Id))
-            {
                 throw new Exception("Slug already exists.");
-            }
 
             if (dto.CoverImage != null)
             {
                 ImageHelper.DeleteImage(
-    blog.CoverImage,
-    _environment);
-
-                blog.CoverImage = await ImageHelper.UploadBlogImageAsync(
-                    dto.CoverImage,
+                    blog.CoverImage,
                     _environment);
+
+                blog.CoverImage =
+                    await ImageHelper.UploadBlogImageAsync(
+                        dto.CoverImage,
+                        _environment);
             }
 
-            //blog.UpdateDate = DateTime.UtcNow;
+            blog.UpdatedAt = DateTime.UtcNow;
+            blog.UpdatedByUserId = currentUserId;
+
+            //---------------------------------
+            // Schedule Logic
+            //---------------------------------
+
+            if (dto.PublishingDate.HasValue)
+            {
+                if (dto.PublishingDate <= DateTime.UtcNow)
+                {
+                    blog.Status = BlogStatus.Published;
+
+                    blog.PublishingDate = DateTime.UtcNow;
+                    blog.PublishedAt = DateTime.UtcNow;
+                    blog.PublishedByUserId = currentUserId;
+                }
+                else
+                {
+                    blog.Status = BlogStatus.Scheduled;
+
+                    blog.PublishingDate = dto.PublishingDate;
+                }
+            }
 
             blog = await _repository.UpdateAsync(blog);
+
             if (blog.Status == BlogStatus.Published)
-            {
                 await _sitemap.GenerateAsync();
-            }
+
             return MapToDto(blog);
         }
 
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(
+     int id,
+     int currentUserId)
         {
-            var result = await _repository.DeleteAsync(id);
+            var result =
+                await _repository.DeleteAsync(
+                    id,
+                    currentUserId);
 
             if (result)
-            {
                 await _sitemap.GenerateAsync();
-            }
 
             return result;
+        }
+
+        public async Task<bool> PublishAsync(
+    int id,
+    int currentUserId)
+        {
+            var result =
+                await _repository.PublishAsync(
+                    id,
+                    currentUserId);
+
+            if (result)
+                await _sitemap.GenerateAsync();
+
+            return result;
+        }
+
+        public async Task<bool> ArchiveAsync(
+    int id,
+    int currentUserId)
+        {
+            var result =
+                await _repository.ArchiveAsync(
+                    id,
+                    currentUserId);
+
+            if (result)
+                await _sitemap.GenerateAsync();
+
+            return result;
+        }
+        public async Task<bool> RestoreAsync(
+    int id,
+    int currentUserId)
+        {
+            return await _repository.RestoreAsync(
+                id,
+                currentUserId);
         }
 
         //public async Task<List<BlogResponseDto>> GetAllAsync()
@@ -208,9 +290,16 @@ namespace RedBerryCorporate.Services
                 CoverImage = blog.CoverImage,
                 BlogDetails = blog.BlogDetails,
                 Tags = blog.Tags,
+
                 Status = blog.Status.ToString(),
-                //EntryDate = blog.EntryDate,
-                PublishingDate = blog.PublishingDate
+
+                EntryDate = blog.CreatedAt,
+
+                PublishingDate = blog.PublishingDate,
+
+                ReadTime = blog.ReadTime,
+
+                OpenCount = blog.OpenCount
             };
         }
 
@@ -222,6 +311,18 @@ namespace RedBerryCorporate.Services
                            .ToLower()
                            .Replace(" ", "-");
             }
+        }
+
+        private static int CalculateReadTime(string? content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+                return 1;
+
+            var words = content.Split(
+                ' ',
+                StringSplitOptions.RemoveEmptyEntries).Length;
+
+            return Math.Max(1, (int)Math.Ceiling(words / 200.0));
         }
     }
 }
