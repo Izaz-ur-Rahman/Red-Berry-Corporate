@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.Enums;
 using RedBerryCorporate.Helpers;
@@ -334,6 +335,38 @@ namespace RedBerryCorporate.Services
                            .ToLower()
                            .Replace(" ", "-");
             }
+        }
+
+        public async Task<BlogViewerResponseDto?> ViewAsync(string slug)
+        {
+            //---------------------------------------
+            // Get Blog
+            //---------------------------------------
+
+            var blog =
+                await _repository.GetViewerAsync(slug);
+
+            if (blog == null)
+                return null;
+
+            //---------------------------------------
+            // Increase Open Count
+            //---------------------------------------
+
+            await _repository.IncrementOpenCountAsync(blog.Id);
+
+            blog.OpenCount++;
+
+            //---------------------------------------
+            // Related Blogs
+            //---------------------------------------
+
+            blog.RelatedBlogs =
+                await _repository.GetRelatedBlogsAsync(
+                    blog.Id,
+                    blog.Category);
+
+            return blog;
         }
 
         private static int CalculateReadTime(string? content)
