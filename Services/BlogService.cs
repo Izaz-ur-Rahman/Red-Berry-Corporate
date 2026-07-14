@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Cards;
 using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.Enums;
@@ -48,6 +49,7 @@ namespace RedBerryCorporate.Services
                 Slug = slug,
                 Category = dto.Category,
                 MetaDescription = dto.MetaDescription,
+                ShortDescription = dto.ShortDescription,
                 BlogDetails = dto.BlogDetails,
                 Tags = dto.Tags,
                 CoverImage = image,
@@ -107,6 +109,7 @@ namespace RedBerryCorporate.Services
             blog.Title = dto.Title;
             blog.Category = dto.Category;
             blog.MetaDescription = dto.MetaDescription;
+            blog.ShortDescription = dto.ShortDescription;
             blog.BlogDetails = dto.BlogDetails;
             blog.Tags = dto.Tags;
 
@@ -369,6 +372,10 @@ namespace RedBerryCorporate.Services
             return blog;
         }
 
+        public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        {
+            return await _repository.GetBlogCardsAsync();
+        }
         private static int CalculateReadTime(string? content)
         {
             if (string.IsNullOrWhiteSpace(content))

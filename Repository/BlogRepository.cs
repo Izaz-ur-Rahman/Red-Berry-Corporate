@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RedBerryCorporate.Data;
 using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Cards;
 using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.Enums;
 using RedBerryCorporate.Interfaces.Blog;
@@ -360,6 +361,56 @@ namespace RedBerryCorporate.Repository
                     ReadTime = x.ReadTime
                 })
                 .ToListAsync();
+
+        }
+        public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        {
+            return await
+            (
+                from blog in _context.Blogs.AsNoTracking()
+
+                join user in _context.Users
+                    on blog.CreatedByUserId equals user.ID
+
+                join employee in _context.TblEmployees
+                    on user.EmpId equals employee.ID
+
+                where blog.Status == BlogStatus.Published
+                      && !blog.IsDeleted
+                      && blog.IsActive
+
+                orderby blog.PublishingDate descending
+
+                select new BlogCardDto
+                {
+                    Id = blog.Id,
+
+                    Title = blog.Title,
+
+                    Slug = blog.Slug,
+
+                    CoverImage = blog.CoverImage,
+
+                    ShortDescription = blog.ShortDescription,
+
+                    PublishingDate = blog.PublishingDate,
+
+                    ReadTime = blog.ReadTime,
+
+                    Author = new BlogCardAuthorDto
+                    {
+                        Name = employee.FULL_NAME,
+
+                        Designation = employee.Position,
+
+                        ProfileImage =
+                            !string.IsNullOrWhiteSpace(employee.Photo)
+                                ? employee.Photo
+                                : employee.ProfilePicName
+                    }
+                }
+
+            ).ToListAsync();
         }
     }
 }

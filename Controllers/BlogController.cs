@@ -317,5 +317,47 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+        #region View Blog (Website)
+
+        [AllowAnonymous]
+        [HttpGet("View/{slug}")]
+        public async Task<IActionResult> View(string slug)
+        {
+            var result = await _blogService.ViewAsync(slug);
+
+            if (result == null)
+            {
+                return NotFound(new
+                {
+                    Success = false,
+                    Message = "Blog not found."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Data = result
+            });
+        }
+
+        #endregion
+        #region Blog Cards
+
+        [AllowAnonymous]
+        [HttpGet("Cards")]
+        public async Task<IActionResult> Cards()
+        {
+            var result =
+                await _blogService.GetBlogCardsAsync();
+
+            return Ok(new
+            {
+                Success = true,
+                Data = result
+            });
+        }
+
+        #endregion
     }
 }

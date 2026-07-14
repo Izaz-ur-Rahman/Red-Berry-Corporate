@@ -1,4 +1,5 @@
 ﻿using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Cards;
 using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.Models;
 
@@ -40,5 +41,7 @@ namespace RedBerryCorporate.Interfaces.Blog
             int currentBlogId,
             string? category,
             int take = 3);
+
+        Task<List<BlogCardDto>> GetBlogCardsAsync();
     }
 }
