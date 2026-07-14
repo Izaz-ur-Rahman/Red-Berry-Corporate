@@ -20,7 +20,8 @@ namespace RedBerryCorporate.Models
 
         [MaxLength(500)]
         public string? MetaDescription { get; set; }
-
+        [MaxLength(300)]
+        public string? ShortDescription { get; set; }
         public string? CoverImage { get; set; }
 
         public string? BlogDetails { get; set; }

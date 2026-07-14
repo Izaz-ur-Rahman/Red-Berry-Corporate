@@ -16,7 +16,8 @@ namespace RedBerryCorporate.DTOs.Blog
         public string? Category { get; set; }
 
         public string? MetaDescription { get; set; }
-
+        [MaxLength(300)]
+        public string? ShortDescription { get; set; }
         public IFormFile? CoverImage { get; set; }
 
         public string? BlogDetails { get; set; }

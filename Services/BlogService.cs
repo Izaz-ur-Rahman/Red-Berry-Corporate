@@ -48,6 +48,7 @@ namespace RedBerryCorporate.Services
                 Slug = slug,
                 Category = dto.Category,
                 MetaDescription = dto.MetaDescription,
+                ShortDescription = dto.ShortDescription,
                 BlogDetails = dto.BlogDetails,
                 Tags = dto.Tags,
                 CoverImage = image,
@@ -107,6 +108,7 @@ namespace RedBerryCorporate.Services
             blog.Title = dto.Title;
             blog.Category = dto.Category;
             blog.MetaDescription = dto.MetaDescription;
+            blog.ShortDescription = dto.ShortDescription;
             blog.BlogDetails = dto.BlogDetails;
             blog.Tags = dto.Tags;
 
