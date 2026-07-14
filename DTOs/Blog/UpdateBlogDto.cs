@@ -1,24 +1,28 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace RedBerryCorporate.DTOs.Blog
 {
     public class UpdateBlogDto
     {
+        [Required]
         public int Id { get; set; }
 
+        [Required]
         public string Title { get; set; }
 
-        public string Category { get; set; }
-
-        public string MetaDescription { get; set; }
-
-        public string BlogDetails { get; set; }
-
-        public string Tags { get; set; }
-
-        // Optional
         public string? Slug { get; set; }
 
+        public string? Category { get; set; }
+
+        public string? MetaDescription { get; set; }
+
         public IFormFile? CoverImage { get; set; }
+
+        public string? BlogDetails { get; set; }
+
+        public string? Tags { get; set; }
+
+        public DateTime? PublishingDate { get; set; }
     }
 }

@@ -56,8 +56,8 @@ namespace RedBerryCorporate.Helpers
                 builder.AppendLine(
                     $"<loc>{baseUrl}/blog/{blog.Slug}</loc>");
 
-                builder.AppendLine(
-                    $"<lastmod>{(blog.UpdateDate ?? blog.EntryDate):yyyy-MM-dd}</lastmod>");
+                //builder.AppendLine(
+                //    $"<lastmod>{(blog.UpdateDate ?? blog.EntryDate):yyyy-MM-dd}</lastmod>");
 
                 builder.AppendLine("<changefreq>monthly</changefreq>");
 

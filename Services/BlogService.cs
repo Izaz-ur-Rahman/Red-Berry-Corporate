@@ -62,8 +62,8 @@ namespace RedBerryCorporate.Services
 
                 CoverImage = imagePath,
 
-                EntryDate = DateTime.UtcNow,
-                UpdateDate = DateTime.UtcNow,
+                //EntryDate = DateTime.UtcNow,
+                //UpdateDate = DateTime.UtcNow,
 
                 IsActive = true,
 
@@ -114,7 +114,7 @@ namespace RedBerryCorporate.Services
                     _environment);
             }
 
-            blog.UpdateDate = DateTime.UtcNow;
+            //blog.UpdateDate = DateTime.UtcNow;
 
             blog = await _repository.UpdateAsync(blog);
             if (blog.Status == BlogStatus.Published)
@@ -209,7 +209,7 @@ namespace RedBerryCorporate.Services
                 BlogDetails = blog.BlogDetails,
                 Tags = blog.Tags,
                 Status = blog.Status.ToString(),
-                EntryDate = blog.EntryDate,
+                //EntryDate = blog.EntryDate,
                 PublishingDate = blog.PublishingDate
             };
         }

@@ -8,18 +8,18 @@ namespace RedBerryCorporate.DTOs.Blog
         [Required]
         public string Title { get; set; }
 
-        public string Category { get; set; }
-
-        public string MetaDescription { get; set; }
-
-        public string BlogDetails { get; set; }
-
-        // Optional
         public string? Slug { get; set; }
 
-        public string Tags { get; set; }
+        public string? Category { get; set; }
 
-        // Upload file instead of string
+        public string? MetaDescription { get; set; }
+
         public IFormFile? CoverImage { get; set; }
+
+        public string? BlogDetails { get; set; }
+
+        public string? Tags { get; set; }
+
+        public DateTime? PublishingDate { get; set; }
     }
 }

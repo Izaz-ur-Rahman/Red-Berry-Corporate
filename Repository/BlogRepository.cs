@@ -110,9 +110,9 @@ namespace RedBerryCorporate.Repository
             // Sorting
             //------------------------------------
 
-            blogs = query.SortBy.ToLower() == "oldest"
-                ? blogs.OrderBy(x => x.EntryDate)
-                : blogs.OrderByDescending(x => x.EntryDate);
+            //blogs = query.SortBy.ToLower() == "oldest"
+            //    ? blogs.OrderBy(x => x.EntryDate)
+            //    : blogs.OrderByDescending(x => x.EntryDate);
 
             //------------------------------------
             // Total Count
