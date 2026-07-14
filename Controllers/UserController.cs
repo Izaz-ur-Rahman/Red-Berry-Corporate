@@ -8,7 +8,7 @@ namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-  //  [Authorize]
+    [Authorize]
     public class UserController : BaseApiController
     {
         private readonly IUserService _userService;
@@ -60,9 +60,10 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+
         #region My Profile
 
-        [Authorize]
+      
         [HttpGet("Profile")]
         public async Task<IActionResult> GetProfile()
         {
@@ -151,7 +152,7 @@ namespace RedBerryCorporate.Controllers
 
         #endregion
         #region Create User
-        [AllowAnonymous]
+       
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserDto dto)
         {
@@ -223,9 +224,9 @@ namespace RedBerryCorporate.Controllers
             [FromForm] UploadProfileImageDto dto)
         {
             // Temporary until JWT is enabled
-            // var currentUserId = GetCurrentUserIdOrThrow();
+             var currentUserId = GetCurrentUserIdOrThrow();
 
-            var currentUserId = 1;
+            //var currentUserId = 1;
 
             await _userService.UploadProfileImageAsync(
                 dto,
