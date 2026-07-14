@@ -162,12 +162,18 @@ var app = builder.Build();
 
 #region Middleware Pipeline
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+app.UseSwagger();
 
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "RedBerry Corporate API v1");
+    options.RoutePrefix = "swagger";
+});
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
