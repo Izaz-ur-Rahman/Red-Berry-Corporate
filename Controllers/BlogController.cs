@@ -239,17 +239,17 @@ namespace RedBerryCorporate.Controllers
 
         #endregion
 
-        #region Published Blogs
+        //#region Published Blogs
 
-        [HttpGet("Published")]
-        public async Task<IActionResult> GetPublished()
-        {
-            var result = await _blogService.GetPublishedAsync();
+        //[HttpGet("Published")]
+        //public async Task<IActionResult> GetPublished()
+        //{
+        //    var result = await _blogService.GetPublishedAsync();
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
-        #endregion
+        //#endregion
 
         #region Get Blog By Id
 
@@ -272,51 +272,51 @@ namespace RedBerryCorporate.Controllers
 
         #endregion
 
-        #region Get Blog By Slug
+        //#region Get Blog By Slug
 
-        [HttpGet("Slug/{slug}")]
-        public async Task<IActionResult> GetBySlug(string slug)
-        {
-            var result = await _blogService.GetBySlugAsync(slug);
+        //[HttpGet("Slug/{slug}")]
+        //public async Task<IActionResult> GetBySlug(string slug)
+        //{
+        //    var result = await _blogService.GetBySlugAsync(slug);
 
-            if (result == null)
-            {
-                return NotFound(new
-                {
-                    Success = false,
-                    Message = "Blog not found."
-                });
-            }
+        //    if (result == null)
+        //    {
+        //        return NotFound(new
+        //        {
+        //            Success = false,
+        //            Message = "Blog not found."
+        //        });
+        //    }
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
-        #endregion
+        //#endregion
 
-        #region Increment Open Count
+        //#region Increment Open Count
 
-        [HttpPost("OpenCount/{id}")]
-        public async Task<IActionResult> IncrementOpenCount(int id)
-        {
-            var result = await _blogService.IncrementOpenCountAsync(id);
+        //[HttpPost("OpenCount/{id}")]
+        //public async Task<IActionResult> IncrementOpenCount(int id)
+        //{
+        //    var result = await _blogService.IncrementOpenCountAsync(id);
 
-            if (!result)
-            {
-                return NotFound(new
-                {
-                    Success = false,
-                    Message = "Blog not found."
-                });
-            }
+        //    if (!result)
+        //    {
+        //        return NotFound(new
+        //        {
+        //            Success = false,
+        //            Message = "Blog not found."
+        //        });
+        //    }
 
-            return Ok(new
-            {
-                Success = true,
-                Message = "Open count updated."
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        Success = true,
+        //        Message = "Open count updated."
+        //    });
+        //}
 
-        #endregion
+        //#endregion
         #region View Blog (Website)
 
         [AllowAnonymous]
