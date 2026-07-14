@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RedBerryCorporate.Data;
 using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.Enums;
 using RedBerryCorporate.Interfaces.Blog;
 using RedBerryCorporate.Models;
@@ -252,6 +253,113 @@ namespace RedBerryCorporate.Repository
         {
             _context.Blogs.Update(blog);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<BlogViewerResponseDto?> GetViewerAsync(string slug)
+        {
+            var data = await
+            (
+                from blog in _context.Blogs.AsNoTracking()
+
+                join user in _context.Users
+                    on blog.CreatedByUserId equals user.ID
+
+                join employee in _context.TblEmployees
+                    on user.EmpId equals employee.ID
+
+                where blog.Slug == slug
+                    && blog.Status == BlogStatus.Published
+                    && blog.IsDeleted == false
+                    && blog.IsActive
+
+                select new BlogViewerResponseDto
+                {
+                    Id = blog.Id,
+
+                    Title = blog.Title,
+
+                    Slug = blog.Slug,
+
+                    Category = blog.Category,
+
+                    CoverImage = blog.CoverImage,
+
+                    MetaDescription = blog.MetaDescription,
+
+                    BlogDetails = blog.BlogDetails,
+
+                    Tags = blog.Tags,
+
+                    ReadTime = blog.ReadTime,
+
+                    OpenCount = blog.OpenCount,
+
+                    PublishingDate = blog.PublishingDate,
+
+                    Author = new BlogAuthorDto
+                    {
+                        UserId = user.ID,
+
+                        FullName = employee.FULL_NAME,
+
+                        Designation = employee.Position,
+
+                        Bio = employee.Bio,
+
+                        Email = employee.EMAIL_ADDRESS,
+
+                        Phone = employee.MOBILE_SMS,
+
+                        LinkedIn = employee.LinkedIn,
+
+                        Facebook = employee.Facebook,
+
+                        Twitter = employee.Twitter,
+
+                        Whatsapp = employee.WhatsappNo,
+
+                        ProfileImage =
+                            !string.IsNullOrWhiteSpace(employee.Photo)
+                                ? employee.Photo
+                                : employee.ProfilePicName
+                    }
+                }
+            )
+            .FirstOrDefaultAsync();
+
+            return data;
+        }
+
+        public async Task<List<RelatedBlogDto>> GetRelatedBlogsAsync(
+    int currentBlogId,
+    string? category,
+    int take = 3)
+        {
+            return await _context.Blogs
+                .AsNoTracking()
+                .Where(x =>
+                    x.Id != currentBlogId &&
+                    x.Category == category &&
+                    x.Status == BlogStatus.Published &&
+                    !x.IsDeleted &&
+                    x.IsActive)
+                .OrderByDescending(x => x.PublishingDate)
+                .Take(take)
+                .Select(x => new RelatedBlogDto
+                {
+                    Id = x.Id,
+
+                    Title = x.Title,
+
+                    Slug = x.Slug,
+
+                    CoverImage = x.CoverImage,
+
+                    PublishingDate = x.PublishingDate,
+
+                    ReadTime = x.ReadTime
+                })
+                .ToListAsync();
         }
     }
 }
