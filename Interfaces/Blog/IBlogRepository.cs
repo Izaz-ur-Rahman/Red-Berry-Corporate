@@ -1,4 +1,5 @@
 ﻿using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Interfaces.Blog
@@ -33,5 +34,11 @@ namespace RedBerryCorporate.Interfaces.Blog
 
         Task<bool> SlugExistsAsync(string slug, int? ignoreId = null);
         Task PublishScheduledBlogAsync(BlogEntity blog);
+        Task<BlogViewerResponseDto?> GetViewerAsync(string slug);
+
+        Task<List<RelatedBlogDto>> GetRelatedBlogsAsync(
+            int currentBlogId,
+            string? category,
+            int take = 3);
     }
 }
