@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Cards;
 using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.Enums;
@@ -371,6 +372,10 @@ namespace RedBerryCorporate.Services
             return blog;
         }
 
+        public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        {
+            return await _repository.GetBlogCardsAsync();
+        }
         private static int CalculateReadTime(string? content)
         {
             if (string.IsNullOrWhiteSpace(content))

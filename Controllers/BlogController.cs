@@ -342,5 +342,22 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+        #region Blog Cards
+
+        [AllowAnonymous]
+        [HttpGet("Cards")]
+        public async Task<IActionResult> Cards()
+        {
+            var result =
+                await _blogService.GetBlogCardsAsync();
+
+            return Ok(new
+            {
+                Success = true,
+                Data = result
+            });
+        }
+
+        #endregion
     }
 }
