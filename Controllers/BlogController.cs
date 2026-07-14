@@ -8,7 +8,7 @@ namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize]
     public class BlogController : BaseApiController
     {
         private readonly IBlogService _blogService;
