@@ -51,6 +51,7 @@ namespace RedBerryCorporate.Services
         {
             try
             {
+               
                 using var client = new SmtpClient(
                     _settings.SmtpServer,
                     _settings.Port);
@@ -63,7 +64,6 @@ namespace RedBerryCorporate.Services
                 client.UseDefaultCredentials = false;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.Timeout = 30000;
-
                 var mail = new MailMessage
                 {
                     From = new MailAddress(
@@ -74,14 +74,19 @@ namespace RedBerryCorporate.Services
                     Body = body,
                     IsBodyHtml = true
                 };
-
+           
                 mail.To.Add(to);
-
+               
                 await client.SendMailAsync(mail);
+                //Console.WriteLine("STEP 7 AFTER SEND");
+                //Console.WriteLine("EMAIL SENT");
             }
             catch (Exception ex)
             {
-                throw new Exception($"SMTP Error: {ex.Message}", ex);
+                //Console.WriteLine(ex);
+
+                //throw;
+                //throw new Exception($"SMTP Error: {ex.Message}", ex);
             }
         }
 

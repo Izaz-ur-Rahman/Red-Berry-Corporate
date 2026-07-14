@@ -8,7 +8,7 @@ namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-  //  [Authorize]
+    [Authorize]
     public class UserController : BaseApiController
     {
         private readonly IUserService _userService;
@@ -60,9 +60,10 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+
         #region My Profile
 
-        [Authorize]
+      
         [HttpGet("Profile")]
         public async Task<IActionResult> GetProfile()
         {
@@ -89,9 +90,8 @@ namespace RedBerryCorporate.Controllers
 
         #endregion
         #region Update My Profile
-
         [Authorize]
-        [HttpPut("Profile")]
+        [HttpPost("profile/update")]
         public async Task<IActionResult> UpdateProfile(UpdateProfileDto dto)
         {
             var currentUserId = GetCurrentUserIdOrThrow();
@@ -104,11 +104,25 @@ namespace RedBerryCorporate.Controllers
                 Message = "Profile updated successfully."
             });
         }
+        //[Authorize]
+        //[HttpPut("Profile")]
+        //public async Task<IActionResult> UpdateProfile(UpdateProfileDto dto)
+        //{
+        //    var currentUserId = GetCurrentUserIdOrThrow();
+
+        //    await _userService.UpdateProfileAsync(dto, currentUserId);
+
+        //    return Ok(new
+        //    {
+        //        Success = true,
+        //        Message = "Profile updated successfully."
+        //    });
+        //}
 
         #endregion
         #region Change Password
-
-        [HttpPut("change-password")]
+        [Authorize]
+        [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
         {
             var currentUserId = GetCurrentUserIdOrThrow();
@@ -122,9 +136,23 @@ namespace RedBerryCorporate.Controllers
             });
         }
 
+        //[HttpPut("change-password")]
+        //public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        //{
+        //    var currentUserId = GetCurrentUserIdOrThrow();
+
+        //    await _userService.ChangePasswordAsync(currentUserId, dto);
+
+        //    return Ok(new
+        //    {
+        //        Success = true,
+        //        Message = "Password changed successfully."
+        //    });
+        //}
+
         #endregion
         #region Create User
-        [AllowAnonymous]
+       
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserDto dto)
         {
@@ -143,8 +171,7 @@ namespace RedBerryCorporate.Controllers
         #endregion
 
         #region Update User
-
-        [HttpPut]
+        [HttpPost("update")]
         public async Task<IActionResult> Update(UpdateUserDto dto)
         {
             var currentUserId = GetCurrentUserIdOrThrow();
@@ -157,12 +184,25 @@ namespace RedBerryCorporate.Controllers
                 Message = "User updated successfully."
             });
         }
+        //[HttpPut]
+        //public async Task<IActionResult> Update(UpdateUserDto dto)
+        //{
+        //    var currentUserId = GetCurrentUserIdOrThrow();
+
+        //    await _userService.UpdateAsync(dto, currentUserId);
+
+        //    return Ok(new
+        //    {
+        //        Success = true,
+        //        Message = "User updated successfully."
+        //    });
+        //}
 
         #endregion
 
         #region Delete User
 
-        [HttpDelete("{id}")]
+        [HttpPost("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var currentUserId = GetCurrentUserIdOrThrow();
@@ -173,6 +213,29 @@ namespace RedBerryCorporate.Controllers
             {
                 Success = true,
                 Message = "User deleted successfully."
+            });
+        }
+
+        #endregion
+        #region Upload Profile Image
+
+        [HttpPost("profile-image")]
+        public async Task<IActionResult> UploadProfileImage(
+            [FromForm] UploadProfileImageDto dto)
+        {
+            // Temporary until JWT is enabled
+             var currentUserId = GetCurrentUserIdOrThrow();
+
+            //var currentUserId = 1;
+
+            await _userService.UploadProfileImageAsync(
+                dto,
+                currentUserId);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile image uploaded successfully."
             });
         }
 

@@ -22,8 +22,9 @@ namespace RedBerryCorporate.Services
         public async Task<LoginResponseDto> LoginAsync(LoginDto dto)
         {
             // Find User
-            var user = await _repository.GetUserByUserNameAsync(dto.UserName);
-
+            //var user = await _repository.GetUserByUserNameAsync(dto.UserName);
+            var user =
+    await _repository.GetUserByEmailAsync(dto.Email);
             if (user == null)
             {
                 throw new Exception("Invalid username or password.");
@@ -76,6 +77,7 @@ namespace RedBerryCorporate.Services
             {
                 UserId = user.ID,
                 UserName = user.UserName ?? "",
+                Email = employee?.EMAIL_ADDRESS,
                 EmpId = user.EmpId,
                 EmployeeName = employee?.FULL_NAME,
                 Role = user.RoleNames,

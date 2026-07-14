@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RedBerryCorporate.DTOs.Contact;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
@@ -6,7 +7,9 @@ using RedBerryCorporate.Interfaces;
 namespace RedBerryCorporate.Controllers
 {
     [ApiController]
+
     [Route("api/[controller]")]
+    [Authorize]
     public class ContactController : ControllerBase
     {
         private readonly IContactService _service;
@@ -15,7 +18,7 @@ namespace RedBerryCorporate.Controllers
         {
             _service = service;
         }
-
+        [AllowAnonymous]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] ContactCreateDto dto)
         {

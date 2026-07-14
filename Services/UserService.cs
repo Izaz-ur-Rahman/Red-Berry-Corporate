@@ -8,11 +8,19 @@ namespace RedBerryCorporate.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-
-        public UserService(IUserRepository userRepository)
+        private readonly FileHelper _fileHelper;
+        public UserService(
+    IUserRepository userRepository,
+    FileHelper fileHelper)
         {
             _userRepository = userRepository;
+            _fileHelper = fileHelper;
         }
+        //public UserService(IUserRepository userRepository)
+        //{
+        //    _userRepository = userRepository;
+
+        //}
 
         #region Get All Users
 
@@ -243,6 +251,108 @@ namespace RedBerryCorporate.Services
             user.UpdatedBy = userId;
 
             _userRepository.Update(user);
+
+            await _userRepository.SaveChangesAsync();
+        }
+
+        #endregion
+        #region Upload Profile Image
+
+        public async Task UploadProfileImageAsync(
+            UploadProfileImageDto dto,
+            int currentUserId)
+        {
+            // ==========================
+            // Get Current User
+            // ==========================
+
+            var user = await _userRepository.GetByIdAsync(currentUserId);
+
+            if (user == null)
+                throw new Exception("User not found.");
+
+            if (!user.EmpId.HasValue)
+                throw new Exception("Employee not found.");
+
+            // ==========================
+            // Get Employee
+            // ==========================
+
+            var employee =
+                await _userRepository.GetEmployeeByIdAsync(user.EmpId.Value);
+
+            if (employee == null)
+                throw new Exception("Employee not found.");
+
+            // ==========================
+            // Validate Image
+            // ==========================
+
+            if (dto.Image == null || dto.Image.Length == 0)
+                throw new Exception("Please select an image.");
+
+            // ==========================
+            // Allowed Extensions
+            // ==========================
+
+            var extension =
+                Path.GetExtension(dto.Image.FileName).ToLower();
+
+            var allowedExtensions = new[]
+            {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp"
+    };
+
+            if (!allowedExtensions.Contains(extension))
+            {
+                throw new Exception(
+                    "Only JPG, JPEG, PNG and WEBP images are allowed.");
+            }
+
+            // ==========================
+            // Max Size (2 MB)
+            // ==========================
+
+            if (dto.Image.Length > 2 * 1024 * 1024)
+            {
+                throw new Exception(
+                    "Maximum image size is 2 MB.");
+            }
+
+            // ==========================
+            // Delete Old Image
+            // ==========================
+
+            if (!string.IsNullOrWhiteSpace(employee.Photo))
+            {
+                _fileHelper.DeleteImage(
+                    "users",
+                    employee.Photo);
+            }
+
+            // ==========================
+            // Save New Image
+            // ==========================
+
+            var fileName =
+                await _fileHelper.SaveImageAsync(
+                    dto.Image,
+                    "users");
+
+            // ==========================
+            // Update Employee
+            // ==========================
+
+            employee.Photo = fileName;
+
+            employee.UpdatedBy = currentUserId;
+
+            employee.UpdatedDate = DateTime.UtcNow;
+
+            _userRepository.UpdateEmployee(employee);
 
             await _userRepository.SaveChangesAsync();
         }

@@ -70,6 +70,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // user 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<FileHelper>();
 #endregion
 
 #region JWT Authentication
