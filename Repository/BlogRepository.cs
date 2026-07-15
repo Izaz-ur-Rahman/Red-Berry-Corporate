@@ -154,11 +154,62 @@ namespace RedBerryCorporate.Repository
         //        .OrderByDescending(x => x.Id)
         //        .ToListAsync();
         //}
-        public async Task<(List<Blog> Blogs, int TotalCount)> GetAllAsync(BlogQueryDto query)
+        public async Task<(List<BlogResponseDto> Blogs, int TotalCount)> GetAllAsync(BlogQueryDto query)
         {
-            IQueryable<Blog> blogs =
-      _context.Blogs.Where(x => !x.IsDeleted && x.IsActive);
+            //      IQueryable<Blog> blogs =
+            //_context.Blogs.Where(x => !x.IsDeleted && x.IsActive);
+            var blogs =
+          from blog in _context.Blogs
 
+          join user in _context.Users
+              on blog.CreatedByUserId equals user.ID
+
+          join employee in _context.TblEmployees
+              on user.EmpId equals employee.ID
+
+          where !blog.IsDeleted &&
+                blog.IsActive
+
+          select new BlogResponseDto
+          {
+              Id = blog.Id,
+
+              Title = blog.Title,
+
+              Category = blog.Category,
+
+              MetaDescription = blog.MetaDescription,
+
+              Slug = blog.Slug,
+
+              CoverImage = blog.CoverImage,
+
+              BlogDetails = blog.BlogDetails,
+
+              Tags = blog.Tags,
+
+              Status = blog.Status.ToString(),
+
+              EntryDate = blog.CreatedAt,
+
+              PublishingDate = blog.PublishingDate,
+
+              ReadTime = blog.ReadTime,
+
+              OpenCount = blog.OpenCount,
+
+              Author = new BlogCardAuthorDto
+              {
+                  Name = employee.FULL_NAME,
+
+                  Designation = employee.Position,
+
+                  ProfileImage =
+                      !string.IsNullOrWhiteSpace(employee.Photo)
+                          ? employee.Photo
+                          : employee.ProfilePicName
+              }
+          };
             //------------------------------------
             // Search
             //------------------------------------
@@ -182,20 +233,26 @@ namespace RedBerryCorporate.Repository
             //------------------------------------
             // Status
             //------------------------------------
-
             if (query.Status.HasValue)
             {
                 blogs = blogs.Where(x =>
-                    x.Status == query.Status);
+                    x.Status == query.Status.ToString());
             }
+            //if (query.Status.HasValue)
+            //{
+            //    blogs = blogs.Where(x =>
+            //        x.Status == query.Status);
+            //}
 
             //------------------------------------
             // Sorting
             //------------------------------------
-
             blogs = query.SortBy.ToLower() == "oldest"
-     ? blogs.OrderBy(x => x.CreatedAt)
-     : blogs.OrderByDescending(x => x.CreatedAt);
+    ? blogs.OrderBy(x => x.EntryDate)
+    : blogs.OrderByDescending(x => x.EntryDate);
+            //       blogs = query.SortBy.ToLower() == "oldest"
+            //? blogs.OrderBy(x => x.CreatedAt)
+            //: blogs.OrderByDescending(x => x.CreatedAt);
 
             //------------------------------------
             // Total Count
