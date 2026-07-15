@@ -144,33 +144,33 @@ builder.Services.AddSwaggerGen(options =>
 #endregion
 
 #region CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("ReactPolicy", policy =>
-    {
-        policy
-            .WithOrigins(
-                "http://localhost:8080",
-                "https://localhost:8080",
-                "https://redberrycorporate.ittcomcentre.net",
-                "https://redberrycorporatecms.ittcomcentre.net",
-                "http://redberrycorporate.ittcomcentre.net",
-                "http://redberrycorporatecms.ittcomcentre.net"
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
 //builder.Services.AddCors(options =>
 //{
 //    options.AddPolicy("ReactPolicy", policy =>
 //    {
 //        policy
-//            .AllowAnyOrigin()
+//            .WithOrigins(
+//                "http://localhost:8080",
+//                "https://localhost:8080",
+//                "https://redberrycorporate.ittcomcentre.net",
+//                "https://redberrycorporatecms.ittcomcentre.net",
+//                "http://redberrycorporate.ittcomcentre.net",
+//                "http://redberrycorporatecms.ittcomcentre.net"
+//            )
 //            .AllowAnyHeader()
 //            .AllowAnyMethod();
 //    });
 //});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactPolicy", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 #endregion
 
