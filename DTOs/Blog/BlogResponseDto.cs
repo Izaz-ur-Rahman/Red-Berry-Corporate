@@ -1,4 +1,6 @@
-﻿namespace RedBerryCorporate.DTOs.Blog
+﻿using RedBerryCorporate.DTOs.Blog.Cards;
+
+namespace RedBerryCorporate.DTOs.Blog
 {
     public class BlogResponseDto
     {
@@ -25,6 +27,8 @@
         public string Tags { get; set; }
 
         public string Status { get; set; }
-        
+        // NEW
+        public BlogCardAuthorDto? Author { get; set; }
+
     }
 }

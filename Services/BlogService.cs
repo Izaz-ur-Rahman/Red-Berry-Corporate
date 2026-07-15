@@ -229,14 +229,13 @@ namespace RedBerryCorporate.Services
 
         //    return blogs.Select(MapToDto).ToList();
         //}
-
         public async Task<PagedResponse<BlogResponseDto>> GetAllAsync(BlogQueryDto query)
         {
             var result = await _repository.GetAllAsync(query);
 
             return new PagedResponse<BlogResponseDto>
             {
-                Data = result.Blogs.Select(MapToDto).ToList(),
+                Data = result.Blogs,
 
                 PageNumber = query.PageNumber,
 
@@ -245,11 +244,29 @@ namespace RedBerryCorporate.Services
                 TotalRecords = result.TotalCount,
 
                 TotalPages =
-                    (int)Math.Ceiling(
-                        result.TotalCount /
-                        (double)query.PageSize)
+                    (int)Math.Ceiling(result.TotalCount / (double)query.PageSize)
             };
         }
+        //public async Task<PagedResponse<BlogResponseDto>> GetAllAsync(BlogQueryDto query)
+        //{
+        //    var result = await _repository.GetAllAsync(query);
+
+        //    return new PagedResponse<BlogResponseDto>
+        //    {
+        //        Data = result.Blogs.Select(MapToDto).ToList(),
+
+        //        PageNumber = query.PageNumber,
+
+        //        PageSize = query.PageSize,
+
+        //        TotalRecords = result.TotalCount,
+
+        //        TotalPages =
+        //            (int)Math.Ceiling(
+        //                result.TotalCount /
+        //                (double)query.PageSize)
+        //    };
+        //}
         public async Task<List<BlogResponseDto>> GetPublishedAsync()
         {
             var blogs = await _repository.GetPublishedAsync();
