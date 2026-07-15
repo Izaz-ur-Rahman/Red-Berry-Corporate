@@ -179,6 +179,7 @@ namespace RedBerryCorporate.Repository
               Category = blog.Category,
 
               MetaDescription = blog.MetaDescription,
+              ShortDescription = blog.ShortDescription,
 
               Slug = blog.Slug,
 
