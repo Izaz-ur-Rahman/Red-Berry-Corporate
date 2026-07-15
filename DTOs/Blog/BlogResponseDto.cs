@@ -11,6 +11,7 @@ namespace RedBerryCorporate.DTOs.Blog
         public string Category { get; set; }
 
         public string MetaDescription { get; set; }
+        public string? ShortDescription { get; set; }
 
         public string Slug { get; set; }
 

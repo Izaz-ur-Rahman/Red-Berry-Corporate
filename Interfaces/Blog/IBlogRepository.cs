@@ -19,7 +19,7 @@ namespace RedBerryCorporate.Interfaces.Blog
 
         Task<BlogEntity?> GetBySlugAsync(string slug);
 
-        Task<(List<BlogEntity> Blogs, int TotalCount)> GetAllAsync(BlogQueryDto query);
+        Task<(List<BlogResponseDto> Blogs, int TotalCount)> GetAllAsync(BlogQueryDto query);
 
         Task<List<BlogEntity>> GetPublishedAsync();
 
