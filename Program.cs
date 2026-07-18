@@ -7,6 +7,7 @@ using RedBerryCorporate.Data;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
 using RedBerryCorporate.Interfaces.Blog;
+using RedBerryCorporate.Interfaces.EmailTemplate;
 using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Middleware;
 using RedBerryCorporate.Models;
@@ -72,6 +73,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<FileHelper>();
 builder.Services.AddHostedService<ScheduledBlogPublisher>();
+builder.Services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
+
+builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 #endregion
 
 #region JWT Authentication

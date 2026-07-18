@@ -16,5 +16,6 @@ namespace RedBerryCorporate.Data
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<TblEmployee> TblEmployees { get; set; }
+        public DbSet<EmailTemplate> EmailTemplates { get; set; }
     }
 }

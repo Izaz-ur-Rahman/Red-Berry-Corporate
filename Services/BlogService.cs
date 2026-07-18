@@ -235,6 +235,7 @@ namespace RedBerryCorporate.Services
 
             return new PagedResponse<BlogResponseDto>
             {
+               
                 Data = result.Blogs,
 
                 PageNumber = query.PageNumber,
