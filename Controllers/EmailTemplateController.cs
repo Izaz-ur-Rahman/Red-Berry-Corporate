@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RedBerryApi.Controllers;
+using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.DTOs.EmailTemplate;
+using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces.EmailTemplate;
 
 namespace RedBerryCorporate.Controllers
@@ -31,8 +33,7 @@ namespace RedBerryCorporate.Controllers
                 await _service.AddAsync(
                     dto,
                     currentUserId);
-
-            return Ok(new
+            return Ok(new ApiResponse<EmailTemplateResponseDto>
             {
                 Success = true,
                 Message = "Email template created successfully.",
@@ -57,19 +58,19 @@ namespace RedBerryCorporate.Controllers
 
             if (result == null)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
-                    Message = "Template not found."
+                    Message = "Email template not found."
                 });
             }
-
-            return Ok(new
+            return Ok(new ApiResponse<EmailTemplateResponseDto>
             {
                 Success = true,
                 Message = "Email template updated successfully.",
                 Data = result
             });
+
         }
 
         #endregion
@@ -89,17 +90,17 @@ namespace RedBerryCorporate.Controllers
 
             if (!result)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
-                    Message = "Template not found."
+                    Message = "Email template not found."
                 });
             }
 
-            return Ok(new
+            return Ok(new ApiResponse<object>
             {
                 Success = true,
-                Message = "Template deleted successfully."
+                Message = "Email template deleted successfully."
             });
         }
 
@@ -115,7 +116,12 @@ namespace RedBerryCorporate.Controllers
             var result =
                 await _service.GetAllAsync(query);
 
-            return Ok(result);
+            return Ok(new ApiResponse<PagedResponse<EmailTemplateResponseDto>>
+            {
+                Success = true,
+                Message = "Email templates retrieved successfully.",
+                Data = result
+            });
         }
 
         #endregion
@@ -131,14 +137,19 @@ namespace RedBerryCorporate.Controllers
 
             if (result == null)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
-                    Message = "Template not found."
+                    Message = "Email template not found."
                 });
             }
 
-            return Ok(result);
+            return Ok(new ApiResponse<EmailTemplateResponseDto>
+            {
+                Success = true,
+                Message = "Email template retrieved successfully.",
+                Data = result
+            });
         }
 
         #endregion
