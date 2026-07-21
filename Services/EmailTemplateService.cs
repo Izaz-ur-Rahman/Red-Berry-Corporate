@@ -2,6 +2,7 @@
 using RedBerryCorporate.DTOs.EmailTemplate;
 using RedBerryCorporate.Interfaces.EmailTemplate;
 using RedBerryCorporate.Models;
+using System.Reflection;
 
 namespace RedBerryCorporate.Services
 {
@@ -163,6 +164,37 @@ GenerateTemplateKeyAsync(
 
             return key;
         }
+        public async Task<RenderedEmailDto> RenderAsync(
+    string templateKey,
+    object model)
+        {
+            var template =
+                await _repository.GetByTemplateKeyAsync(templateKey);
 
+            if (template == null)
+                throw new Exception(
+                    $"Email template '{templateKey}' not found.");
+
+            string subject = template.Subject;
+            string body = template.BodyHtml;
+
+            foreach (PropertyInfo property in model.GetType().GetProperties())
+            {
+                string token = "{{" + property.Name + "}}";
+
+                string value =
+                    property.GetValue(model)?.ToString() ?? "";
+
+                subject = subject.Replace(token, value);
+
+                body = body.Replace(token, value);
+            }
+
+            return new RenderedEmailDto
+            {
+                Subject = subject,
+                Body = body
+            };
+        }
     }
 }

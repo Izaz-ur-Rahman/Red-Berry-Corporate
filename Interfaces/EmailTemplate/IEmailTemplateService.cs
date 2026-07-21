@@ -22,5 +22,9 @@ namespace RedBerryCorporate.Interfaces.EmailTemplate
 
         Task<PagedResponse<EmailTemplateResponseDto>>
             GetAllAsync(EmailTemplateQueryDto query);
+        // NEW
+        Task<RenderedEmailDto> RenderAsync(
+            string templateKey,
+            object model);
     }
 }
