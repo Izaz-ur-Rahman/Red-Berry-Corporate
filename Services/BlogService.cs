@@ -202,8 +202,7 @@ namespace RedBerryCorporate.Services
     int currentUserId)
         {
             // Get blog first
-            var blog = await _repository.GetByIdAsync(id);
-
+            var blog = await _repository.GetByIdForUpdateAsync(id);
             if (blog == null)
                 return false;
 
@@ -313,8 +312,7 @@ namespace RedBerryCorporate.Services
     int id,
     int currentUserId)
         {
-            var blog = await _repository.GetByIdAsync(id);
-
+            var blog = await _repository.GetByIdForUpdateAsync(id);
             if (blog == null)
                 return false;
 
@@ -343,8 +341,7 @@ namespace RedBerryCorporate.Services
     int id,
     int currentUserId)
         {
-            var blog = await _repository.GetByIdAsync(id);
-
+            var blog = await _repository.GetByIdForUpdateAsync(id);
             if (blog == null)
                 return false;
 
@@ -373,7 +370,7 @@ namespace RedBerryCorporate.Services
     int id,
     int currentUserId)
         {
-            var blog = await _repository.GetByIdAsync(id);
+            var blog = await _repository.GetByIdForUpdateAsync(id);
 
             if (blog == null)
                 return false;
