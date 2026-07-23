@@ -23,5 +23,6 @@ namespace RedBerryCorporate.Interfaces.EmailTemplate
         Task<bool> TemplateKeyExistsAsync(
             string templateKey,
             int? ignoreId = null);
+       // Task<Models.EmailTemplate?> GetByTemplateKeyAsync(string templateKey);
     }
 }
