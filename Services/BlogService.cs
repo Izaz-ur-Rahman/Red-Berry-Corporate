@@ -6,6 +6,7 @@ using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.Enums;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces.Blog;
+using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Models;
 
@@ -16,14 +17,16 @@ namespace RedBerryCorporate.Services
         private readonly IBlogRepository _repository;
         private readonly IWebHostEnvironment _environment;
         private readonly ISitemapGenerator _sitemap;
+        private readonly INotificationService _notificationService;
 
         public BlogService(
             IBlogRepository repository,
-            IWebHostEnvironment environment,ISitemapGenerator sitemap)
+            IWebHostEnvironment environment,ISitemapGenerator sitemap, INotificationService notificationService)
         {
             _repository = repository;
             _environment = environment;
             _sitemap = sitemap;
+            _notificationService = notificationService;
         }
 
         public async Task<BlogResponseDto> AddAsync(
@@ -88,8 +91,17 @@ namespace RedBerryCorporate.Services
             {
                 blog.Status = BlogStatus.Draft;
             }
-
+            // notificatio api call here 
             blog = await _repository.AddAsync(blog);
+            await _notificationService.CreateAsync(
+    title: "New Blog Created",
+    message: $"Blog '{blog.Title}' was created successfully.",
+    type: NotificationType.Success,
+    action: NotificationAction.Created,
+    module: NotificationModule.Blog,
+    entityId: blog.Id,
+    currentUserId: currentUserId);
+
 
             if (blog.Status == BlogStatus.Published)
                 await _sitemap.GenerateAsync();
@@ -163,9 +175,10 @@ namespace RedBerryCorporate.Services
 
             blog = await _repository.UpdateAsync(blog);
 
+
             if (blog.Status == BlogStatus.Published)
                 await _sitemap.GenerateAsync();
-
+        
             return MapToDto(blog);
         }
 
