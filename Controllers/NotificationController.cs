@@ -131,5 +131,35 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+
+        #region Delete Notification
+
+        [HttpPost("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var currentUserId =
+                GetCurrentUserIdOrThrow();
+
+            var result =
+                await _service.DeleteAsync(
+                    id,
+                    currentUserId);
+
+            if (!result)
+            {
+                return NotFound(new ApiErrorResponse
+                {
+                    Message = "Notification not found."
+                });
+            }
+
+            return Ok(new ApiResponse<object>
+            {
+                Success = true,
+                Message = "Notification deleted successfully."
+            });
+        }
+
+        #endregion
     }
 }
