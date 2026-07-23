@@ -44,16 +44,14 @@ namespace RedBerryCorporate.Repositories
                     notifications.Where(x =>
                         x.IsRead == query.IsRead.Value);
             }
-
             //-----------------------------------
             // Filter by Module
             //-----------------------------------
 
-            if (!string.IsNullOrWhiteSpace(query.Module))
+            if (query.Module.HasValue)
             {
-                notifications =
-                    notifications.Where(x =>
-                        x.Module == query.Module);
+                notifications = notifications.Where(x =>
+                    x.Module == query.Module.Value);
             }
 
             //-----------------------------------

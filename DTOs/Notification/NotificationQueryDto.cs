@@ -1,4 +1,6 @@
-﻿namespace RedBerryCorporate.DTOs.Notification
+﻿using RedBerryCorporate.Enums;
+
+namespace RedBerryCorporate.DTOs.Notification
 {
     public class NotificationQueryDto
     {
@@ -8,6 +10,6 @@
 
         public bool? IsRead { get; set; }
 
-        public string? Module { get; set; }
+        public NotificationModule? Module { get; set; }
     }
 }
