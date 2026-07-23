@@ -3,14 +3,15 @@ using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Interfaces.Notification
 {
+    using NotificationEntity = RedBerryCorporate.Models.Notification;
     public interface INotificationRepository
     {
-        Task<Notification> AddAsync(Notification notification);
+        Task<NotificationEntity> AddAsync(NotificationEntity notification);
 
-        Task<(List<Notification> Notifications, int TotalCount)>
+        Task<(List<NotificationEntity> Notifications, int TotalCount)>
             GetAllAsync(NotificationQueryDto query);
 
-        Task<Notification?> GetByIdAsync(int id);
+        Task<NotificationEntity?> GetByIdAsync(int id);
 
         Task<int> GetUnreadCountAsync();
 
