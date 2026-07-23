@@ -369,6 +369,36 @@ namespace RedBerryCorporate.Services
 
             return result;
         }
+        public async Task<bool> RestoreAsync(
+    int id,
+    int currentUserId)
+        {
+            var blog = await _repository.GetByIdAsync(id);
+
+            if (blog == null)
+                return false;
+
+            var result =
+                await _repository.RestoreAsync(
+                    id,
+                    currentUserId);
+
+            if (result)
+            {
+                await _sitemap.GenerateAsync();
+
+                await _notificationService.CreateAsync(
+                    title: "Blog Restored",
+                    message: $"Blog '{blog.Title}' was restored successfully.",
+                    type: NotificationType.Success,
+                    action: NotificationAction.Restored,
+                    module: NotificationModule.Blog,
+                    entityId: blog.Id,
+                    currentUserId: currentUserId);
+            }
+
+            return result;
+        }
         //public async Task<List<BlogResponseDto>> GetAllAsync()
         //{
         //    var blogs = await _repository.GetAllAsync();
