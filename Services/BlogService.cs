@@ -9,6 +9,7 @@ using RedBerryCorporate.Interfaces.Blog;
 using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Models;
+using System.Reflection.Metadata;
 
 namespace RedBerryCorporate.Services
 {
@@ -192,21 +193,60 @@ namespace RedBerryCorporate.Services
             return MapToDto(blog);
         }
 
-
         public async Task<bool> DeleteAsync(
-     int id,
-     int currentUserId)
+    int id,
+    int currentUserId)
         {
-            var result =
-                await _repository.DeleteAsync(
-                    id,
-                    currentUserId);
+            // Get blog first
+            var blog = await _repository.GetByIdAsync(id);
+
+            if (blog == null)
+                return false;
+
+            var result = await _repository.DeleteAsync(
+                id,
+                currentUserId);
 
             if (result)
+            {
                 await _sitemap.GenerateAsync();
+
+                await _notificationService.CreateAsync(
+                    title: "Blog Deleted",
+                    message: $"Blog '{blog.Title}' was deleted successfully.",
+                    type: NotificationType.Warning,
+                    action: NotificationAction.Deleted,
+                    module: NotificationModule.Blog,
+                    entityId: blog.Id,
+                    currentUserId: currentUserId);
+            }
 
             return result;
         }
+        //    public async Task<bool> DeleteAsync(
+        // int id,
+        // int currentUserId)
+        //    {
+        //        var result =
+        //            await _repository.DeleteAsync(
+        //                id,
+        //                currentUserId);
+
+
+        //        if (result)
+        //            await _sitemap.GenerateAsync();
+
+        //        await _notificationService.CreateAsync(
+        //title: "Blog Deleted",
+        //message: $"Blog '{blog.Title}' was deleted successfully.",
+        //type: NotificationType.Warning,
+        //action: NotificationAction.Deleted,
+        //module: NotificationModule.Blog,
+        //entityId: blog.Id,
+        //currentUserId: currentUserId);
+
+        //        return result;
+        //    }
 
         public async Task<bool> PublishAsync(
     int id,
