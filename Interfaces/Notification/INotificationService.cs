@@ -26,5 +26,8 @@ namespace RedBerryCorporate.Interfaces.Notification
         Task<bool> MarkAsReadAsync(int id);
 
         Task<int> MarkAllAsReadAsync();
+        Task<bool> DeleteAsync(
+    int id,
+    int currentUserId);
     }
 }
