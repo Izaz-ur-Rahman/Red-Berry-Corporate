@@ -175,6 +175,16 @@ namespace RedBerryCorporate.Services
 
             blog = await _repository.UpdateAsync(blog);
 
+            // notification api call here
+            await _notificationService.CreateAsync(
+    title: "Blog Updated",
+    message: $"Blog '{blog.Title}' was updated successfully.",
+    type: NotificationType.Info,
+    action: NotificationAction.Updated,
+    module: NotificationModule.Blog,
+    entityId: blog.Id,
+    currentUserId: currentUserId);
+
 
             if (blog.Status == BlogStatus.Published)
                 await _sitemap.GenerateAsync();
