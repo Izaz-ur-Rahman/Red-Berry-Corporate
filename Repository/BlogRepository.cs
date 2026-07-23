@@ -470,5 +470,11 @@ namespace RedBerryCorporate.Repository
 
             ).ToListAsync();
         }
+
+        public async Task<Blog?> GetByIdForUpdateAsync(int id)
+        {
+            return await _context.Blogs
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }
