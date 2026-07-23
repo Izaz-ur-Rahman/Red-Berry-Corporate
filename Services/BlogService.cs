@@ -92,6 +92,10 @@ namespace RedBerryCorporate.Services
             {
                 blog.Status = BlogStatus.Draft;
             }
+
+            if (blog.Status == BlogStatus.Published)
+                await _sitemap.GenerateAsync();
+
             // notificatio api call here 
             blog = await _repository.AddAsync(blog);
             await _notificationService.CreateAsync(
@@ -104,8 +108,7 @@ namespace RedBerryCorporate.Services
     currentUserId: currentUserId);
 
 
-            if (blog.Status == BlogStatus.Published)
-                await _sitemap.GenerateAsync();
+        
 
             return MapToDto(blog);
         }
@@ -176,6 +179,9 @@ namespace RedBerryCorporate.Services
 
             blog = await _repository.UpdateAsync(blog);
 
+            if (blog.Status == BlogStatus.Published)
+                await _sitemap.GenerateAsync();
+
             // notification api call here
             await _notificationService.CreateAsync(
     title: "Blog Updated",
@@ -187,8 +193,6 @@ namespace RedBerryCorporate.Services
     currentUserId: currentUserId);
 
 
-            if (blog.Status == BlogStatus.Published)
-                await _sitemap.GenerateAsync();
         
             return MapToDto(blog);
         }
@@ -248,44 +252,93 @@ namespace RedBerryCorporate.Services
         //        return result;
         //    }
 
+        //    public async Task<bool> PublishAsync(
+        //int id,
+        //int currentUserId)
+        //    {
+        //        var result =
+        //            await _repository.PublishAsync(
+        //                id,
+        //                currentUserId);
+
+        //        if (result)
+        //            await _sitemap.GenerateAsync();
+
+        //        await _notificationService.CreateAsync(
+        //title: "Blog Published",
+        //message: $"Blog '{blog.Title}' has been published.",
+        //type: NotificationType.Success,
+        //action: NotificationAction.Published,
+        //module: NotificationModule.Blog,
+        //entityId: blog.Id,
+        //currentUserId: currentUserId);
+        //        return result;
+        //    }
+
+        //    public async Task<bool> ArchiveAsync(
+        //int id,
+        //int currentUserId)
+        //    {
+        //        var result =
+        //            await _repository.ArchiveAsync(
+        //                id,
+        //                currentUserId);
+
+        //        if (result)
+        //            await _sitemap.GenerateAsync();
+
+
+        //        return result;
+        //    }
+        //    public async Task<bool> RestoreAsync(
+        //int id,
+        //int currentUserId)
+        //    {
+
+        //        return await _repository.RestoreAsync(
+        //            id,
+        //            currentUserId);
+        //        await _notificationService.CreateAsync(
+        //title: "Blog Published",
+        //message: $"Blog '{blog.Title}' has been published.",
+        //type: NotificationType.Success,
+        //action: NotificationAction.Published,
+        //module: NotificationModule.Blog,
+        //entityId: blog.Id,
+        //currentUserId: currentUserId);
+
+        //    }
+
         public async Task<bool> PublishAsync(
     int id,
     int currentUserId)
         {
+            var blog = await _repository.GetByIdAsync(id);
+
+            if (blog == null)
+                return false;
+
             var result =
                 await _repository.PublishAsync(
                     id,
                     currentUserId);
 
             if (result)
+            {
                 await _sitemap.GenerateAsync();
+
+                await _notificationService.CreateAsync(
+                    title: "Blog Published",
+                    message: $"Blog '{blog.Title}' has been published.",
+                    type: NotificationType.Success,
+                    action: NotificationAction.Published,
+                    module: NotificationModule.Blog,
+                    entityId: blog.Id,
+                    currentUserId: currentUserId);
+            }
 
             return result;
         }
-
-        public async Task<bool> ArchiveAsync(
-    int id,
-    int currentUserId)
-        {
-            var result =
-                await _repository.ArchiveAsync(
-                    id,
-                    currentUserId);
-
-            if (result)
-                await _sitemap.GenerateAsync();
-
-            return result;
-        }
-        public async Task<bool> RestoreAsync(
-    int id,
-    int currentUserId)
-        {
-            return await _repository.RestoreAsync(
-                id,
-                currentUserId);
-        }
-
         //public async Task<List<BlogResponseDto>> GetAllAsync()
         //{
         //    var blogs = await _repository.GetAllAsync();
