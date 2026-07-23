@@ -339,6 +339,36 @@ namespace RedBerryCorporate.Services
 
             return result;
         }
+        public async Task<bool> ArchiveAsync(
+    int id,
+    int currentUserId)
+        {
+            var blog = await _repository.GetByIdAsync(id);
+
+            if (blog == null)
+                return false;
+
+            var result =
+                await _repository.ArchiveAsync(
+                    id,
+                    currentUserId);
+
+            if (result)
+            {
+                await _sitemap.GenerateAsync();
+
+                await _notificationService.CreateAsync(
+                    title: "Blog Archived",
+                    message: $"Blog '{blog.Title}' was archived.",
+                    type: NotificationType.Warning,
+                    action: NotificationAction.Archived,
+                    module: NotificationModule.Blog,
+                    entityId: blog.Id,
+                    currentUserId: currentUserId);
+            }
+
+            return result;
+        }
         //public async Task<List<BlogResponseDto>> GetAllAsync()
         //{
         //    var blogs = await _repository.GetAllAsync();
