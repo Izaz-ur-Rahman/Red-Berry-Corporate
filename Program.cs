@@ -83,7 +83,7 @@ builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 
 // notification 
 builder.Services.AddScoped<INotificationRepository,NotificationRepository>();
-
+builder.Services.AddScoped<INotificationService,NotificationService>();
 #endregion
 
 #region JWT Authentication
