@@ -126,6 +126,14 @@ namespace RedBerryCorporate.Services
             {
                 // STEP 2
                 await _emailService.SendBlueprintEmailsAsync(entity);
+                await _notificationService.CreateAsync(
+    title: "Blueprint Emails Sent",
+    message: $"Blueprint emails sent successfully for '{entity.Name}'.",
+    type: NotificationType.Success,
+    action: NotificationAction.Created,
+    module: NotificationModule.Blueprint,
+    entityId: entity.Id,
+    currentUserId: null);
             }
             catch (Exception ex)
             {
