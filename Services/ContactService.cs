@@ -1,5 +1,7 @@
 ﻿using RedBerryCorporate.DTOs.Contact;
+using RedBerryCorporate.Enums;
 using RedBerryCorporate.Interfaces;
+using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Services
@@ -7,10 +9,14 @@ namespace RedBerryCorporate.Services
     public class ContactService : IContactService
     {
         private readonly IContactRepository _repository;
+        private readonly INotificationService _notificationService;
 
-        public ContactService(IContactRepository repository)
+        public ContactService(
+            IContactRepository repository,
+            INotificationService notificationService)
         {
             _repository = repository;
+            _notificationService = notificationService;
         }
 
         public async Task<ContactResponseDto> CreateAsync(ContactCreateDto dto)
@@ -28,7 +34,15 @@ namespace RedBerryCorporate.Services
             };
 
             var result = await _repository.CreateAsync(contact);
-
+            await _notificationService.CreateAsync(
+    title: "New Contact Inquiry",
+    message: $"A new inquiry has been submitted by '{result.Name}'.",
+    type: NotificationType.Info,
+    action: NotificationAction.Created,
+    module: NotificationModule.Contact,
+    entityId: result.Id,
+    currentUserId: null
+);
             return MapToResponse(result);
         }
 
