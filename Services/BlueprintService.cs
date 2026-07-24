@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RedBerryCorporate.DTOs.Blueprint;
 using RedBerryCorporate.Interfaces;
+using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Services
@@ -9,13 +10,16 @@ namespace RedBerryCorporate.Services
     {
         private readonly IBlueprintRepository _repository;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
         public BlueprintService(
-            IBlueprintRepository repository,
-            IEmailService emailService)
+      IBlueprintRepository repository,
+      IEmailService emailService,
+      INotificationService notificationService)
         {
             _repository = repository;
             _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         #region Create
