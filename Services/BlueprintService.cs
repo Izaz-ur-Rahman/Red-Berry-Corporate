@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RedBerryCorporate.DTOs.Blueprint;
+using RedBerryCorporate.Enums;
 using RedBerryCorporate.Interfaces;
 using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Models;
@@ -107,6 +108,14 @@ namespace RedBerryCorporate.Services
             {
                 // STEP 1
                 entity = await _repository.CreateAsync(entity);
+                await _notificationService.CreateAsync(
+    title: "Blueprint Submitted",
+    message: $"Blueprint submitted by '{entity.Name}'.",
+    type: NotificationType.Success,
+    action: NotificationAction.Created,
+    module: NotificationModule.Blueprint,
+    entityId: entity.Id,
+    currentUserId: null);
             }
             catch (Exception ex)
             {
@@ -248,6 +257,14 @@ namespace RedBerryCorporate.Services
                 JsonConvert.SerializeObject(dto.Result.Patterns);
 
             await _repository.UpdateAsync(entity);
+            await _notificationService.CreateAsync(
+    title: "Blueprint Updated",
+    message: $"Blueprint for '{entity.Name}' was updated.",
+    type: NotificationType.Info,
+    action: NotificationAction.Updated,
+    module: NotificationModule.Blueprint,
+    entityId: entity.Id,
+    currentUserId: null);
 
             return true;
         }
