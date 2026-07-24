@@ -282,7 +282,14 @@ namespace RedBerryCorporate.Services
                 return false;
 
             await _repository.DeleteAsync(entity);
-
+            await _notificationService.CreateAsync(
+    title: "Blueprint Deleted",
+    message: $"Blueprint for '{entity.Name}' was deleted.",
+    type: NotificationType.Warning,
+    action: NotificationAction.Deleted,
+    module: NotificationModule.Blueprint,
+    entityId: entity.Id,
+    currentUserId: null);
             return true;
         }
 
