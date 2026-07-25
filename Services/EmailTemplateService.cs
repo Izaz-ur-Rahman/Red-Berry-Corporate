@@ -79,7 +79,14 @@ namespace RedBerryCorporate.Services
             template.UpdatedByUserId = currentUserId;
 
             template = await _repository.UpdateAsync(template);
-
+            await _notificationService.CreateAsync(
+    title: "Email Template Updated",
+    message: $"Email template '{template.Name}' was updated successfully.",
+    type: NotificationType.Info,
+    action: NotificationAction.Updated,
+    module: NotificationModule.EmailTemplate,
+    entityId: template.Id,
+    currentUserId: currentUserId);
             return MapToDto(template);
         }
         public async Task<bool> DeleteAsync(
