@@ -581,6 +581,14 @@ namespace RedBerryCorporate.Services
             _userRepository.Update(user);
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "User Deactivated",
+    message: $"User '{user.UserName}' was deactivated.",
+    type: NotificationType.Warning,
+    action: NotificationAction.Deleted,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: deletedBy);
         }
 
         #endregion
