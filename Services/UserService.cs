@@ -1,6 +1,8 @@
 ﻿using RedBerryCorporate.DTOs.User;
+using RedBerryCorporate.Enums;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
+using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Services
@@ -9,12 +11,15 @@ namespace RedBerryCorporate.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly FileHelper _fileHelper;
+        private readonly NotificationService _notificationService;
         public UserService(
     IUserRepository userRepository,
-    FileHelper fileHelper)
+    FileHelper fileHelper,
+    NotificationService notificationService)
         {
             _userRepository = userRepository;
             _fileHelper = fileHelper;
+            _notificationService = notificationService;
         }
         //public UserService(IUserRepository userRepository)
         //{
@@ -422,6 +427,14 @@ namespace RedBerryCorporate.Services
             await _userRepository.CreateAsync(user);
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "User Created",
+    message: $"User '{user.UserName}' was created successfully.",
+    type: NotificationType.Success,
+    action: NotificationAction.Created,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: createdBy);
         }
 
         #endregion
