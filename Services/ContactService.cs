@@ -80,7 +80,24 @@ namespace RedBerryCorporate.Services
             contact.Message = dto.Message.Trim();
             contact.UpdatedDate = DateTime.UtcNow;
 
-            return await _repository.UpdateAsync(contact);
+
+            //return await _repository.UpdateAsync(contact);
+            bool result = await _repository.UpdateAsync(contact);
+
+            if (result)
+            {
+                await _notificationService.CreateAsync(
+                    title: "Contact Updated",
+                    message: $"Contact '{contact.Name}' was updated.",
+                    type: NotificationType.Info,
+                    action: NotificationAction.Updated,
+                    module: NotificationModule.Contact,
+                    entityId: contact.Id,
+                    currentUserId: null
+                );
+            }
+
+            return result;
         }
 
         public async Task<bool> DeleteAsync(int id)
