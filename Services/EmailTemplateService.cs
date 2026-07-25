@@ -1,6 +1,8 @@
 ﻿using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.DTOs.EmailTemplate;
+using RedBerryCorporate.Enums;
 using RedBerryCorporate.Interfaces.EmailTemplate;
+using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Models;
 using System.Reflection;
 
@@ -10,11 +12,14 @@ namespace RedBerryCorporate.Services
         : IEmailTemplateService
     {
         private readonly IEmailTemplateRepository _repository;
+        private readonly INotificationService _notificationService;
 
         public EmailTemplateService(
-            IEmailTemplateRepository repository)
+            IEmailTemplateRepository repository,
+            INotificationService notificationService)
         {
             _repository = repository;
+            _notificationService = notificationService;
         }
 
         public async Task<EmailTemplateResponseDto> AddAsync(
@@ -42,7 +47,14 @@ namespace RedBerryCorporate.Services
             };
 
             template = await _repository.AddAsync(template);
-
+            await _notificationService.CreateAsync(
+    title: "Email Template Created",
+    message: $"Email template '{template.Name}' was created successfully.",
+    type: NotificationType.Success,
+    action: NotificationAction.Created,
+    module: NotificationModule.EmailTemplate,
+    entityId: template.Id,
+    currentUserId: currentUserId);
             return MapToDto(template);
         }
 
