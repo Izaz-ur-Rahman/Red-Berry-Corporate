@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using RedBerryCorporate.DTOs.Blueprint;
+using RedBerryCorporate.Enums;
 using RedBerryCorporate.Interfaces;
+using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Services
@@ -9,13 +11,16 @@ namespace RedBerryCorporate.Services
     {
         private readonly IBlueprintRepository _repository;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
         public BlueprintService(
-            IBlueprintRepository repository,
-            IEmailService emailService)
+      IBlueprintRepository repository,
+      IEmailService emailService,
+      INotificationService notificationService)
         {
             _repository = repository;
             _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         #region Create
@@ -103,6 +108,14 @@ namespace RedBerryCorporate.Services
             {
                 // STEP 1
                 entity = await _repository.CreateAsync(entity);
+                await _notificationService.CreateAsync(
+    title: "Blueprint Submitted",
+    message: $"Blueprint submitted by '{entity.Name}'.",
+    type: NotificationType.Success,
+    action: NotificationAction.Created,
+    module: NotificationModule.Blueprint,
+    entityId: entity.Id,
+    currentUserId: null);
             }
             catch (Exception ex)
             {
@@ -113,6 +126,14 @@ namespace RedBerryCorporate.Services
             {
                 // STEP 2
                 await _emailService.SendBlueprintEmailsAsync(entity);
+                await _notificationService.CreateAsync(
+    title: "Blueprint Emails Sent",
+    message: $"Blueprint emails sent successfully for '{entity.Name}'.",
+    type: NotificationType.Success,
+    action: NotificationAction.Created,
+    module: NotificationModule.Blueprint,
+    entityId: entity.Id,
+    currentUserId: null);
             }
             catch (Exception ex)
             {
@@ -244,6 +265,14 @@ namespace RedBerryCorporate.Services
                 JsonConvert.SerializeObject(dto.Result.Patterns);
 
             await _repository.UpdateAsync(entity);
+            await _notificationService.CreateAsync(
+    title: "Blueprint Updated",
+    message: $"Blueprint for '{entity.Name}' was updated.",
+    type: NotificationType.Info,
+    action: NotificationAction.Updated,
+    module: NotificationModule.Blueprint,
+    entityId: entity.Id,
+    currentUserId: null);
 
             return true;
         }
@@ -261,7 +290,14 @@ namespace RedBerryCorporate.Services
                 return false;
 
             await _repository.DeleteAsync(entity);
-
+            await _notificationService.CreateAsync(
+    title: "Blueprint Deleted",
+    message: $"Blueprint for '{entity.Name}' was deleted.",
+    type: NotificationType.Warning,
+    action: NotificationAction.Deleted,
+    module: NotificationModule.Blueprint,
+    entityId: entity.Id,
+    currentUserId: null);
             return true;
         }
 

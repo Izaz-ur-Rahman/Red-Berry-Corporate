@@ -140,5 +140,29 @@ namespace RedBerryCorporate.Repositories
 
             return notifications.Count;
         }
+
+        public async Task<bool> DeleteAsync(
+    int id,
+    int currentUserId)
+        {
+            var notification =
+                await _context.Notifications
+                    .FirstOrDefaultAsync(x =>
+                        x.Id == id &&
+                        !x.IsDeleted);
+
+            if (notification == null)
+                return false;
+
+            notification.IsDeleted = true;
+            notification.IsActive = false;
+
+            notification.DeletedAt = DateTime.UtcNow;
+            notification.DeletedByUserId = currentUserId;
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

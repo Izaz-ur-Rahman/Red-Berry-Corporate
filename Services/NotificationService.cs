@@ -152,5 +152,14 @@ namespace RedBerryCorporate.Services
                 CreatedAt = notification.CreatedAt
             };
         }
+
+        public async Task<bool> DeleteAsync(
+    int id,
+    int currentUserId)
+        {
+            return await _repository.DeleteAsync(
+                id,
+                currentUserId);
+        }
     }
 }
