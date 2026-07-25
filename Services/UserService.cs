@@ -266,6 +266,14 @@ namespace RedBerryCorporate.Services
             _userRepository.Update(user);
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "Password Changed",
+    message: $"Password was changed for user '{user.UserName}'.",
+    type: NotificationType.Warning,
+    action: NotificationAction.Updated,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: userId);
         }
 
         #endregion
