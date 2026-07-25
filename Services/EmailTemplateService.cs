@@ -93,9 +93,28 @@ namespace RedBerryCorporate.Services
     int id,
     int currentUserId)
         {
-            return await _repository.DeleteAsync(
-                id,
-                currentUserId);
+            //return await _repository.DeleteAsync(
+            //    id,
+            //    currentUserId);
+            var template = await _repository.GetByIdAsync(id);
+
+            if (template == null)
+                return false;
+            bool result =await _repository.DeleteAsync(id,currentUserId);
+
+            if (result)
+            {
+                await _notificationService.CreateAsync(
+                    title: "Email Template Deleted",
+                    message: $"Email template '{template.Name}' was deleted successfully.",
+                    type: NotificationType.Warning,
+                    action: NotificationAction.Deleted,
+                    module: NotificationModule.EmailTemplate,
+                    entityId: template.Id,
+                    currentUserId: currentUserId);
+            }
+
+            return result;
         }
 
         public async Task<EmailTemplateResponseDto?> GetByIdAsync(
