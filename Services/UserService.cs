@@ -530,6 +530,14 @@ namespace RedBerryCorporate.Services
             // ============================
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "User Updated",
+    message: $"User '{user.UserName}' was updated successfully.",
+    type: NotificationType.Info,
+    action: NotificationAction.Updated,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: updatedBy);
         }
 
         #endregion
