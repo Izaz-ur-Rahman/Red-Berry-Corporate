@@ -102,7 +102,28 @@ namespace RedBerryCorporate.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
-            return await _repository.DeleteAsync(id);
+            //return await _repository.DeleteAsync(id);
+            var contact = await _repository.GetByIdAsync(id);
+
+            if (contact == null)
+                return false;
+
+            bool result = await _repository.DeleteAsync(id);
+
+            if (result)
+            {
+                await _notificationService.CreateAsync(
+                    title: "Contact Deleted",
+                    message: $"Contact '{contact.Name}' was deleted.",
+                    type: NotificationType.Warning,
+                    action: NotificationAction.Deleted,
+                    module: NotificationModule.Contact,
+                    entityId: contact.Id,
+                    currentUserId: null
+                );
+            }
+
+            return result;
         }
 
         public async Task<(List<ContactResponseDto> Data, int TotalRecords)> GetPagedAsync(ContactListRequestDto request)
