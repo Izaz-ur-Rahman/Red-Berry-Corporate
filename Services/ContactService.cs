@@ -10,17 +10,26 @@ namespace RedBerryCorporate.Services
     {
         private readonly IContactRepository _repository;
         private readonly INotificationService _notificationService;
-
+        private readonly ICaptchaService _captchaService;
         public ContactService(
             IContactRepository repository,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            ICaptchaService captchaService)
         {
             _repository = repository;
             _notificationService = notificationService;
+            _captchaService = captchaService;
         }
 
         public async Task<ContactResponseDto> CreateAsync(ContactCreateDto dto)
         {
+            bool verified =
+    await _captchaService.VerifyTokenAsync(dto.CaptchaToken);
+
+            if (!verified)
+            {
+                throw new Exception("Captcha verification failed.");
+            }
             var contact = new Contact
             {
                 Name = dto.Name.Trim(),
