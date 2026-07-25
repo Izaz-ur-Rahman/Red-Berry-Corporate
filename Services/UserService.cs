@@ -193,6 +193,14 @@ namespace RedBerryCorporate.Services
             _userRepository.UpdateEmployee(employee);
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "Profile Updated",
+    message: $"Profile for '{user.UserName}' was updated.",
+    type: NotificationType.Info,
+    action: NotificationAction.Updated,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: currentUserId);
         }
 
         #endregion
