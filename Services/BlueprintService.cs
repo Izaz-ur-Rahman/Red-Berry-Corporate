@@ -12,15 +12,17 @@ namespace RedBerryCorporate.Services
         private readonly IBlueprintRepository _repository;
         private readonly IEmailService _emailService;
         private readonly INotificationService _notificationService;
-
+        private readonly ICaptchaService _captchaService;
         public BlueprintService(
       IBlueprintRepository repository,
       IEmailService emailService,
-      INotificationService notificationService)
+      INotificationService notificationService,
+      ICaptchaService captchaService)
         {
             _repository = repository;
             _emailService = emailService;
             _notificationService = notificationService;
+            _captchaService = captchaService;
         }
 
         #region Create
@@ -75,6 +77,13 @@ namespace RedBerryCorporate.Services
         //}
         public async Task<BlueprintResponseDto> CreateAsync(BlueprintCreateDto dto)
         {
+            bool verified =
+    await _captchaService.VerifyTokenAsync(dto.CaptchaToken);
+
+            if (!verified)
+            {
+                throw new Exception("Captcha verification failed.");
+            }
             BlueprintSubmission entity = new BlueprintSubmission
             {
                 Name = dto.Name,

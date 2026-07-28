@@ -84,6 +84,10 @@ builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 // notification 
 builder.Services.AddScoped<INotificationRepository,NotificationRepository>();
 builder.Services.AddScoped<INotificationService,NotificationService>();
+builder.Services.Configure<RecaptchaSettings>(
+    builder.Configuration.GetSection("RecaptchaSettings"));
+
+builder.Services.AddHttpClient<ICaptchaService, CaptchaService>();
 #endregion
 
 #region JWT Authentication

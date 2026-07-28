@@ -27,5 +27,6 @@ namespace RedBerryCorporate.DTOs.Contact
         [Required]
         [StringLength(1500, MinimumLength = 10)]
         public string Message { get; set; } = string.Empty;
+        public string CaptchaToken { get; set; } = string.Empty;
     }
 }

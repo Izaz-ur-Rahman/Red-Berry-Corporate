@@ -31,7 +31,7 @@ namespace RedBerryCorporate.DTOs.Blueprint
         public ReviewMethod ReviewMethod { get; set; }
 
         public string? Message { get; set; }
-
+        public string CaptchaToken { get; set; } = string.Empty;
         #endregion
 
         #region Blueprint Result

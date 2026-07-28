@@ -11,11 +11,11 @@ namespace RedBerryCorporate.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly FileHelper _fileHelper;
-        private readonly NotificationService _notificationService;
+        private readonly INotificationService _notificationService;
         public UserService(
     IUserRepository userRepository,
     FileHelper fileHelper,
-    NotificationService notificationService)
+    INotificationService notificationService)
         {
             _userRepository = userRepository;
             _fileHelper = fileHelper;
