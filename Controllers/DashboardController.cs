@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RedBerryApi.Controllers;
 using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.DTOs.Dashboard;
@@ -9,6 +10,7 @@ namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DashboardController : BaseApiController
     {
         private readonly IDashboardService _dashboardService;
