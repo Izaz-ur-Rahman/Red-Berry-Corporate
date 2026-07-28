@@ -13,5 +13,7 @@
         public int ContactSubmissions { get; set; }
 
         public int BlueprintSubmissions { get; set; }
+        public int AllSubmissions { get; set; }
+
     }
 }

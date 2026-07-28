@@ -17,6 +17,12 @@ namespace RedBerryCorporate.Repositories
 
         public async Task<DashboardResponseDto> GetDashboardAsync()
         {
+            var contactCount =
+    await _context.Contacts.CountAsync(x => !x.IsDeleted);
+
+            var blueprintCount =
+                await _context.BlueprintSubmissions.CountAsync();
+
             return new DashboardResponseDto
             {
                 PublishedBlogs =
@@ -39,12 +45,17 @@ namespace RedBerryCorporate.Repositories
                         x.Status == BlogStatus.Archived &&
                         !x.IsDeleted),
 
-                ContactSubmissions =
-                    await _context.Contacts.CountAsync(x =>
-                        !x.IsDeleted),
+                //ContactSubmissions =
+                //    await _context.Contacts.CountAsync(x =>
+                //        !x.IsDeleted),
 
-                BlueprintSubmissions =
-                    await _context.BlueprintSubmissions.CountAsync()
+                //BlueprintSubmissions =
+                //    await _context.BlueprintSubmissions.CountAsync()
+                ContactSubmissions = contactCount,
+
+                BlueprintSubmissions = blueprintCount,
+
+                AllSubmissions = contactCount + blueprintCount
             };
         }
     }
