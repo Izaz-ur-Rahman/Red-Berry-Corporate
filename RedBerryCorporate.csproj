@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Logs\" />
     <Folder Include="wwwroot\uploads\blogs\" />
     <Folder Include="wwwroot\uploads\users\" />
   </ItemGroup>
