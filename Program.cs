@@ -15,10 +15,17 @@ using RedBerryCorporate.Models;
 using RedBerryCorporate.Repositories;
 using RedBerryCorporate.Repository;
 using RedBerryCorporate.Services;
+using Serilog;
 using System.Text;
 
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(
+        new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build())
+    .CreateLogger();
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog();
 #region Controllers
 
 builder.Services.AddControllers();
