@@ -1,0 +1,167 @@
+2026-07-28 17:16:10 [Warning] No store type was specified for the decimal property '"Salary"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-07-28 17:16:10 [Warning] No store type was specified for the decimal property '"Target"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-07-28 17:16:34 [Information] Sending captcha verification request to Google.
+2026-07-28 17:16:35 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-07-28 17:16:35 [Warning] Captcha failed. Errors: "None"
+2026-07-28 17:20:01 [Warning] No store type was specified for the decimal property '"Salary"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-07-28 17:20:01 [Warning] No store type was specified for the decimal property '"Target"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-07-28 17:20:20 [Information] Sending captcha verification request to Google.
+2026-07-28 17:20:20 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"invalid-input-response\"
+  ]
+}"
+2026-07-28 17:20:20 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-07-28 17:20:20 [Warning] Captcha failed. Errors: "None"
+2026-07-28 17:23:32 [Information] Sending captcha verification request to Google.
+2026-07-28 17:23:32 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"invalid-input-response\"
+  ]
+}"
+2026-07-28 17:23:32 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-07-28 17:23:32 [Warning] Captcha failed. Errors: "None"
+2026-07-28 17:51:03 [Error] Failed executing DbCommand ("12,741"ms) [Parameters=[""], CommandType='Text', CommandTimeout='30']"
+""SELECT [b].[Id], [b].[BlogDetails], [b].[Category], [b].[CoverImage], [b].[CreatedAt], [b].[CreatedByUserId], [b].[DeletedAt], [b].[DeletedByUserId], [b].[IsActive], [b].[IsDeleted], [b].[MetaDescription], [b].[OpenCount], [b].[PublishedAt], [b].[PublishedByUserId], [b].[PublishingDate], [b].[ReadTime], [b].[ShortDescription], [b].[Slug], [b].[Status], [b].[Tags], [b].[Title], [b].[UpdatedAt], [b].[UpdatedByUserId]
+FROM [Blogs] AS [b]
+WHERE [b].[IsDeleted] = CAST(0 AS bit) AND [b].[IsActive] = CAST(1 AS bit) AND [b].[Status] = 4 AND [b].[PublishingDate] <= GETUTCDATE()"
+2026-07-28 17:51:06 [Error] An exception occurred while iterating over the results of a query for context type '"RedBerryCorporate.Data.ApplicationDbContext"'."
+""System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A transport-level error has occurred when receiving results from the server. (provider: TCP Provider, error: 0 - An established connection was aborted by the software in your host machine.)
+ ---> System.ComponentModel.Win32Exception (10053): An established connection was aborted by the software in your host machine.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:c99c7172-0459-4fe8-8c64-38e5682b9b3c
+Error Number:10053,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()"
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A transport-level error has occurred when receiving results from the server. (provider: TCP Provider, error: 0 - An established connection was aborted by the software in your host machine.)
+ ---> System.ComponentModel.Win32Exception (10053): An established connection was aborted by the software in your host machine.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:c99c7172-0459-4fe8-8c64-38e5682b9b3c
+Error Number:10053,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2026-07-28 17:51:08 [Error] BackgroundService failed
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A transport-level error has occurred when receiving results from the server. (provider: TCP Provider, error: 0 - An established connection was aborted by the software in your host machine.)
+ ---> System.ComponentModel.Win32Exception (10053): An established connection was aborted by the software in your host machine.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:c99c7172-0459-4fe8-8c64-38e5682b9b3c
+Error Number:10053,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at RedBerryCorporate.Repository.BlogRepository.GetScheduledBlogsAsync() in D:\skill_starting\asp_dot_net\RedBerryCorporate\RedBerryCorporate\Repository\BlogRepository.cs:line 124
+   at RedBerryCorporate.Services.ScheduledBlogPublisher.ExecuteAsync(CancellationToken stoppingToken) in D:\skill_starting\asp_dot_net\RedBerryCorporate\RedBerryCorporate\Services\ScheduledBlogPublisher.cs:line 34
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2026-07-28 17:51:08 [Fatal] The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+System.InvalidOperationException: An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure' to the 'UseSqlServer' call.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): A transport-level error has occurred when receiving results from the server. (provider: TCP Provider, error: 0 - An established connection was aborted by the software in your host machine.)
+ ---> System.ComponentModel.Win32Exception (10053): An established connection was aborted by the software in your host machine.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__211_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+ClientConnectionId:c99c7172-0459-4fe8-8c64-38e5682b9b3c
+Error Number:10053,State:0,Class:20
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at RedBerryCorporate.Repository.BlogRepository.GetScheduledBlogsAsync() in D:\skill_starting\asp_dot_net\RedBerryCorporate\RedBerryCorporate\Repository\BlogRepository.cs:line 124
+   at RedBerryCorporate.Services.ScheduledBlogPublisher.ExecuteAsync(CancellationToken stoppingToken) in D:\skill_starting\asp_dot_net\RedBerryCorporate\RedBerryCorporate\Services\ScheduledBlogPublisher.cs:line 34
+   at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+2026-07-28 18:02:31 [Warning] No store type was specified for the decimal property '"Salary"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-07-28 18:02:31 [Warning] No store type was specified for the decimal property '"Target"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-07-28 18:02:49 [Information] Sending captcha verification request to Google.
+2026-07-28 18:02:50 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-07-28 18:02:50 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-07-28 18:02:50 [Warning] Captcha failed. Errors: "None"
+2026-07-28 18:09:35 [Information] Sending captcha verification request to Google.
+2026-07-28 18:09:36 [Information] Google Raw Response: "{
+  \"success\": true,
+  \"challenge_ts\": \"2026-07-28T13:09:06Z\",
+  \"hostname\": \"localhost\",
+  \"score\": 0.9,
+  \"action\": \"blueprint\"
+}"
+2026-07-28 18:09:36 [Information] Google Response => Success:True, Score:0.9, Action:"blueprint", Host:"localhost"
+2026-07-28 18:09:36 [Information] Captcha verified successfully. Score: 0.9
+2026-07-28 18:11:48 [Information] Sending captcha verification request to Google.
+2026-07-28 18:11:49 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"timeout-or-duplicate\"
+  ]
+}"
+2026-07-28 18:11:49 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-07-28 18:11:49 [Warning] Captcha failed. Errors: "None"
+2026-07-28 18:12:01 [Information] Sending captcha verification request to Google.
+2026-07-28 18:12:02 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"timeout-or-duplicate\"
+  ]
+}"
+2026-07-28 18:12:02 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-07-28 18:12:02 [Warning] Captcha failed. Errors: "None"
+2026-07-28 18:12:38 [Information] Sending captcha verification request to Google.
+2026-07-28 18:12:38 [Information] Google Raw Response: "{
+  \"success\": true,
+  \"challenge_ts\": \"2026-07-28T13:09:06Z\",
+  \"hostname\": \"localhost\",
+  \"score\": 0.9,
+  \"action\": \"blueprint\"
+}"
+2026-07-28 18:12:38 [Information] Google Response => Success:True, Score:0.9, Action:"blueprint", Host:"localhost"
+2026-07-28 18:12:38 [Information] Captcha verified successfully. Score: 0.9

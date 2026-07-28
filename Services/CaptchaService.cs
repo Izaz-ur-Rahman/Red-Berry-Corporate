@@ -174,6 +174,7 @@ namespace RedBerryCorporate.Services
 
                 var json =
                     await response.Content.ReadAsStringAsync();
+                _logger.LogInformation("Google Raw Response: {Json}", json);
 
                 var result =
                     JsonSerializer.Deserialize<RecaptchaResponse>(
@@ -193,17 +194,33 @@ namespace RedBerryCorporate.Services
                 //----------------------------------------
                 // Google Validation
                 //----------------------------------------
+                _logger.LogInformation(
+    "Google Response => Success:{Success}, Score:{Score}, Action:{Action}, Host:{Host}",
+    result.success,
+    result.score,
+    result.action,
+    result.hostname);
 
                 if (!result.success)
                 {
                     _logger.LogWarning(
-                        "Captcha verification failed. Error Codes: {Errors}",
+                        "Captcha failed. Errors: {Errors}",
                         result.error_codes == null
                             ? "None"
                             : string.Join(", ", result.error_codes));
 
                     return false;
                 }
+                //if (!result.success)
+                //{
+                //    _logger.LogWarning(
+                //        "Captcha verification failed. Error Codes: {Errors}",
+                //        result.error_codes == null
+                //            ? "None"
+                //            : string.Join(", ", result.error_codes));
+
+                //    return false;
+                //}
 
                 //----------------------------------------
                 // Score Validation
