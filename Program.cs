@@ -7,9 +7,11 @@ using RedBerryCorporate.Data;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
 using RedBerryCorporate.Interfaces.Blog;
+using RedBerryCorporate.Interfaces.Dashboard;
 using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Middleware;
 using RedBerryCorporate.Models;
+using RedBerryCorporate.Repositories;
 using RedBerryCorporate.Repository;
 using RedBerryCorporate.Services;
 using System.Text;
@@ -71,7 +73,13 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<FileHelper>();
+// blog 
 builder.Services.AddHostedService<ScheduledBlogPublisher>();
+// dashboard
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+
 #endregion
 
 #region JWT Authentication
