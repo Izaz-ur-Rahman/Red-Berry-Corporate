@@ -43,5 +43,7 @@ namespace RedBerryCorporate.Interfaces.Blog
             int take = 3);
 
         Task<List<BlogCardDto>> GetBlogCardsAsync();
+
+        Task<BlogEntity?> GetByIdForUpdateAsync(int id);
     }
 }

@@ -1,6 +1,8 @@
 ﻿using RedBerryCorporate.DTOs.User;
+using RedBerryCorporate.Enums;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
+using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Services
@@ -9,12 +11,15 @@ namespace RedBerryCorporate.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly FileHelper _fileHelper;
+        private readonly INotificationService _notificationService;
         public UserService(
     IUserRepository userRepository,
-    FileHelper fileHelper)
+    FileHelper fileHelper,
+    INotificationService notificationService)
         {
             _userRepository = userRepository;
             _fileHelper = fileHelper;
+            _notificationService = notificationService;
         }
         //public UserService(IUserRepository userRepository)
         //{
@@ -188,6 +193,14 @@ namespace RedBerryCorporate.Services
             _userRepository.UpdateEmployee(employee);
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "Profile Updated",
+    message: $"Profile for '{user.UserName}' was updated.",
+    type: NotificationType.Info,
+    action: NotificationAction.Updated,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: currentUserId);
         }
 
         #endregion
@@ -253,6 +266,14 @@ namespace RedBerryCorporate.Services
             _userRepository.Update(user);
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "Password Changed",
+    message: $"Password was changed for user '{user.UserName}'.",
+    type: NotificationType.Warning,
+    action: NotificationAction.Updated,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: userId);
         }
 
         #endregion
@@ -422,6 +443,14 @@ namespace RedBerryCorporate.Services
             await _userRepository.CreateAsync(user);
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "User Created",
+    message: $"User '{user.UserName}' was created successfully.",
+    type: NotificationType.Success,
+    action: NotificationAction.Created,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: createdBy);
         }
 
         #endregion
@@ -517,6 +546,14 @@ namespace RedBerryCorporate.Services
             // ============================
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "User Updated",
+    message: $"User '{user.UserName}' was updated successfully.",
+    type: NotificationType.Info,
+    action: NotificationAction.Updated,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: updatedBy);
         }
 
         #endregion
@@ -560,6 +597,14 @@ namespace RedBerryCorporate.Services
             _userRepository.Update(user);
 
             await _userRepository.SaveChangesAsync();
+            await _notificationService.CreateAsync(
+    title: "User Deactivated",
+    message: $"User '{user.UserName}' was deactivated.",
+    type: NotificationType.Warning,
+    action: NotificationAction.Deleted,
+    module: NotificationModule.User,
+    entityId: user.ID,
+    currentUserId: deletedBy);
         }
 
         #endregion

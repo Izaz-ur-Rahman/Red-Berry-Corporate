@@ -1,14 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RedBerryApi.Controllers;
 using RedBerryCorporate.DTOs.Blog;
+using RedBerryCorporate.DTOs.Blog.Cards;
+using RedBerryCorporate.DTOs.Blog.Viewer;
+using RedBerryCorporate.DTOs.Common;
+using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces.Blog;
-using Microsoft.AspNetCore.Authorization;
 
 namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class BlogController : BaseApiController
     {
         private readonly IBlogService _blogService;
@@ -31,13 +35,13 @@ namespace RedBerryCorporate.Controllers
             var result = await _blogService.AddAsync(
                 dto,
                 currentUserId);
-
-            return Ok(new
+            return Ok(new ApiResponse<BlogResponseDto>
             {
                 Success = true,
                 Message = "Blog created successfully.",
                 Data = result
             });
+          
         }
 
         #endregion
@@ -57,19 +61,19 @@ namespace RedBerryCorporate.Controllers
                 currentUserId);
             if (result == null)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Blog not found."
                 });
             }
-
-            return Ok(new
+            return Ok(new ApiResponse<BlogResponseDto>
             {
                 Success = true,
                 Message = "Blog updated successfully.",
                 Data = result
             });
+           
         }
 
         #endregion
@@ -89,14 +93,19 @@ namespace RedBerryCorporate.Controllers
                 currentUserId);
             if (!result)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Blog not found."
                 });
             }
 
-            return Ok(new
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Message = "Blog deleted successfully."
+            //});
+            return Ok(new ApiResponse<object>
             {
                 Success = true,
                 Message = "Blog deleted successfully."
@@ -119,18 +128,27 @@ namespace RedBerryCorporate.Controllers
                 currentUserId);
             if (!result)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Blog not found."
                 });
+                //return NotFound(new
+                //{
+                //    Success = false,
+                //    Message = "Blog not found."
+                //});
             }
-
-            return Ok(new
+            return Ok(new ApiResponse<object>
             {
                 Success = true,
                 Message = "Blog published successfully."
             });
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Message = "Blog published successfully."
+            //});
         }
 
         #endregion
@@ -149,18 +167,22 @@ namespace RedBerryCorporate.Controllers
                 currentUserId);
             if (!result)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Blog not found."
                 });
             }
-
-            return Ok(new
+            return Ok(new ApiResponse<object>
             {
                 Success = true,
                 Message = "Blog archived successfully."
             });
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Message = "Blog archived successfully."
+            //});
         }
 
         #endregion
@@ -179,18 +201,27 @@ namespace RedBerryCorporate.Controllers
                 currentUserId);
             if (!result)
             {
-                return NotFound(new
+                //return NotFound(new
+                //{
+                //    Success = false,
+                //    Message = "Blog not found."
+                //});
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Blog not found."
                 });
             }
-
-            return Ok(new
+            return Ok(new ApiResponse<object>
             {
                 Success = true,
                 Message = "Blog restored successfully."
             });
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Message = "Blog restored successfully."
+            //});
         }
 
         #endregion
@@ -212,31 +243,52 @@ namespace RedBerryCorporate.Controllers
 
             if (!result)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Blog not found."
                 });
+                //return NotFound(new
+                //{
+                //    Success = false,
+                //    Message = "Blog not found."
+                //});
             }
 
-            return Ok(new
+            return Ok(new ApiResponse<object>
             {
                 Success = true,
                 Message = "Blog scheduled successfully."
             });
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Message = "Blog scheduled successfully."
+            //});
         }
 
         #endregion
         #region Get All Blogs (Pagination)
 
+        //[HttpGet("List")]
+        //public async Task<IActionResult> GetAll([FromQuery] BlogQueryDto query)
+        //{
+        //    var result = await _blogService.GetAllAsync(query);
+
+        //    return Ok(result);
+        //}
         [HttpGet("List")]
         public async Task<IActionResult> GetAll([FromQuery] BlogQueryDto query)
         {
             var result = await _blogService.GetAllAsync(query);
 
-            return Ok(result);
+            return Ok(new ApiResponse<PagedResponse<BlogResponseDto>>
+            {
+                Success = true,
+                Message = "Blogs retrieved successfully.",
+                Data = result
+            });
         }
-
         #endregion
 
         //#region Published Blogs
@@ -260,14 +312,25 @@ namespace RedBerryCorporate.Controllers
 
             if (result == null)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Blog not found."
                 });
+                //return NotFound(new
+                //{
+                //    Success = false,
+                //    Message = "Blog not found."
+                //});
             }
 
-            return Ok(result);
+            //return Ok(result);
+            return Ok(new ApiResponse<BlogResponseDto>
+            {
+                Success = true,
+                Message = "Blog retrieved successfully.",
+                Data = result
+            });
         }
 
         #endregion
@@ -327,18 +390,28 @@ namespace RedBerryCorporate.Controllers
 
             if (result == null)
             {
-                return NotFound(new
+                return NotFound(new ApiResponse<object>
                 {
                     Success = false,
                     Message = "Blog not found."
                 });
+                //return NotFound(new
+                //{
+                //    Success = false,
+                //    Message = "Blog not found."
+                //});
             }
-
-            return Ok(new
+            return Ok(new ApiResponse<BlogViewerResponseDto>
             {
                 Success = true,
+                Message = "Blog retrieved successfully.",
                 Data = result
             });
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Data = result
+            //});
         }
 
         #endregion
@@ -351,9 +424,15 @@ namespace RedBerryCorporate.Controllers
             var result =
                 await _blogService.GetBlogCardsAsync();
 
-            return Ok(new
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Data = result
+            //});
+            return Ok(new ApiResponse<List<BlogCardDto>>
             {
                 Success = true,
+                Message = "Blogs retrieved successfully.",
                 Data = result
             });
         }
