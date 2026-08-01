@@ -29,9 +29,6 @@ namespace RedBerryCorporate.Controllers
         {
             var currentUserId = GetCurrentUserIdOrThrow();
 
-            // Until JWT is enabled you may temporarily use:
-            // var currentUserId = 1;
-
             var result = await _blogService.AddAsync(
                 dto,
                 currentUserId);
@@ -85,8 +82,7 @@ namespace RedBerryCorporate.Controllers
         {
             var currentUserId = GetCurrentUserIdOrThrow();
 
-            // Temporary
-            // var currentUserId = 1;
+        
 
             var result = await _blogService.DeleteAsync(
                 id,
@@ -133,22 +129,14 @@ namespace RedBerryCorporate.Controllers
                     Success = false,
                     Message = "Blog not found."
                 });
-                //return NotFound(new
-                //{
-                //    Success = false,
-                //    Message = "Blog not found."
-                //});
+               
             }
             return Ok(new ApiResponse<object>
             {
                 Success = true,
                 Message = "Blog published successfully."
             });
-            //return Ok(new
-            //{
-            //    Success = true,
-            //    Message = "Blog published successfully."
-            //});
+          
         }
 
         #endregion
@@ -178,11 +166,7 @@ namespace RedBerryCorporate.Controllers
                 Success = true,
                 Message = "Blog archived successfully."
             });
-            //return Ok(new
-            //{
-            //    Success = true,
-            //    Message = "Blog archived successfully."
-            //});
+           
         }
 
         #endregion
@@ -193,19 +177,13 @@ namespace RedBerryCorporate.Controllers
         {
             var currentUserId = GetCurrentUserIdOrThrow();
 
-            // Temporary
-            // var currentUserId = 1;
 
             var result = await _blogService.RestoreAsync(
                 id,
                 currentUserId);
             if (!result)
             {
-                //return NotFound(new
-                //{
-                //    Success = false,
-                //    Message = "Blog not found."
-                //});
+                
                 return NotFound(new ApiResponse<object>
                 {
                     Success = false,
@@ -217,11 +195,7 @@ namespace RedBerryCorporate.Controllers
                 Success = true,
                 Message = "Blog restored successfully."
             });
-            //return Ok(new
-            //{
-            //    Success = true,
-            //    Message = "Blog restored successfully."
-            //});
+   
         }
 
         #endregion
@@ -231,10 +205,7 @@ namespace RedBerryCorporate.Controllers
         public async Task<IActionResult> Schedule(ScheduleBlogDto dto)
         {
 
-            // Temporary until JWT is enabled
-            //int currentUserId = 1;
-
-            // Later replace with:
+           
              var currentUserId = GetCurrentUserIdOrThrow();
 
             var result = await _blogService.ScheduleAsync(
@@ -248,11 +219,7 @@ namespace RedBerryCorporate.Controllers
                     Success = false,
                     Message = "Blog not found."
                 });
-                //return NotFound(new
-                //{
-                //    Success = false,
-                //    Message = "Blog not found."
-                //});
+               
             }
 
             return Ok(new ApiResponse<object>
@@ -260,23 +227,13 @@ namespace RedBerryCorporate.Controllers
                 Success = true,
                 Message = "Blog scheduled successfully."
             });
-            //return Ok(new
-            //{
-            //    Success = true,
-            //    Message = "Blog scheduled successfully."
-            //});
+         
         }
 
         #endregion
         #region Get All Blogs (Pagination)
 
-        //[HttpGet("List")]
-        //public async Task<IActionResult> GetAll([FromQuery] BlogQueryDto query)
-        //{
-        //    var result = await _blogService.GetAllAsync(query);
-
-        //    return Ok(result);
-        //}
+        
         [HttpGet("List")]
         public async Task<IActionResult> GetAll([FromQuery] BlogQueryDto query)
         {
@@ -291,17 +248,7 @@ namespace RedBerryCorporate.Controllers
         }
         #endregion
 
-        //#region Published Blogs
-
-        //[HttpGet("Published")]
-        //public async Task<IActionResult> GetPublished()
-        //{
-        //    var result = await _blogService.GetPublishedAsync();
-
-        //    return Ok(result);
-        //}
-
-        //#endregion
+       
 
         #region Get Blog By Id
 
@@ -335,51 +282,7 @@ namespace RedBerryCorporate.Controllers
 
         #endregion
 
-        //#region Get Blog By Slug
-
-        //[HttpGet("Slug/{slug}")]
-        //public async Task<IActionResult> GetBySlug(string slug)
-        //{
-        //    var result = await _blogService.GetBySlugAsync(slug);
-
-        //    if (result == null)
-        //    {
-        //        return NotFound(new
-        //        {
-        //            Success = false,
-        //            Message = "Blog not found."
-        //        });
-        //    }
-
-        //    return Ok(result);
-        //}
-
-        //#endregion
-
-        //#region Increment Open Count
-
-        //[HttpPost("OpenCount/{id}")]
-        //public async Task<IActionResult> IncrementOpenCount(int id)
-        //{
-        //    var result = await _blogService.IncrementOpenCountAsync(id);
-
-        //    if (!result)
-        //    {
-        //        return NotFound(new
-        //        {
-        //            Success = false,
-        //            Message = "Blog not found."
-        //        });
-        //    }
-
-        //    return Ok(new
-        //    {
-        //        Success = true,
-        //        Message = "Open count updated."
-        //    });
-        //}
-
-        //#endregion
+        
         #region View Blog (Website)
 
         [AllowAnonymous]
@@ -424,11 +327,7 @@ namespace RedBerryCorporate.Controllers
             var result =
                 await _blogService.GetBlogCardsAsync();
 
-            //return Ok(new
-            //{
-            //    Success = true,
-            //    Data = result
-            //});
+          
             return Ok(new ApiResponse<List<BlogCardDto>>
             {
                 Success = true,
