@@ -254,6 +254,7 @@ using RedBerryCorporate.Data;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces;
 using RedBerryCorporate.Interfaces.Blog;
+using RedBerryCorporate.Interfaces.BlogCategory;
 using RedBerryCorporate.Interfaces.Dashboard;
 using RedBerryCorporate.Interfaces.EmailTemplate;
 using RedBerryCorporate.Interfaces.Notification;
@@ -353,6 +354,11 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // reCAPTCHA
 builder.Services.AddHttpClient<ICaptchaService, CaptchaService>();
+
+// blog category
+
+builder.Services.AddScoped<IBlogCategoryRepository,BlogCategoryRepository>();
+builder.Services.AddScoped<IBlogCategoryService,BlogCategoryService>();
 
 #endregion
 
