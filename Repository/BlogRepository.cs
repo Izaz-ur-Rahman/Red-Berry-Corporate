@@ -148,12 +148,7 @@ namespace RedBerryCorporate.Repository
           x.Status == BlogStatus.Published);
         }
 
-        //public async Task<List<Blog>> GetAllAsync()
-        //{
-        //    return await _context.Blogs
-        //        .OrderByDescending(x => x.Id)
-        //        .ToListAsync();
-        //}
+      
         public async Task<(List<BlogResponseDto> Blogs, int TotalCount)> GetAllAsync(BlogQueryDto query)
         {
             //      IQueryable<Blog> blogs =

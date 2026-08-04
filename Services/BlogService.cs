@@ -6,6 +6,7 @@ using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.Enums;
 using RedBerryCorporate.Helpers;
 using RedBerryCorporate.Interfaces.Blog;
+using RedBerryCorporate.Interfaces.BlogCategory;
 using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Models;
@@ -19,15 +20,17 @@ namespace RedBerryCorporate.Services
         private readonly IWebHostEnvironment _environment;
         private readonly ISitemapGenerator _sitemap;
         private readonly INotificationService _notificationService;
+        private readonly IBlogCategoryRepository _categoryRepository;
 
         public BlogService(
             IBlogRepository repository,
-            IWebHostEnvironment environment,ISitemapGenerator sitemap, INotificationService notificationService)
+            IWebHostEnvironment environment,ISitemapGenerator sitemap, INotificationService notificationService, IBlogCategoryRepository categoryRepository)
         {
             _repository = repository;
             _environment = environment;
             _sitemap = sitemap;
             _notificationService = notificationService;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<BlogResponseDto> AddAsync(
@@ -46,12 +49,23 @@ namespace RedBerryCorporate.Services
                 await ImageHelper.UploadBlogImageAsync(
                     dto.CoverImage,
                     _environment);
+            if (dto.CategoryId.HasValue)
+            {
+                var category =
+                    await _categoryRepository.GetByIdAsync(
+                        dto.CategoryId.Value);
 
+                if (category == null || !category.IsActive)
+                {
+                    throw new Exception(
+                        "Selected blog category is invalid.");
+                }
+            }
             var blog = new Blog
             {
                 Title = dto.Title,
                 Slug = slug,
-                Category = dto.Category,
+                CategoryId = dto.CategoryId,
                 MetaDescription = dto.MetaDescription,
                 ShortDescription = dto.ShortDescription,
                 BlogDetails = dto.BlogDetails,
@@ -113,17 +127,48 @@ namespace RedBerryCorporate.Services
             return MapToDto(blog);
         }
 
-        public async Task<BlogResponseDto?> UpdateAsync(
-      UpdateBlogDto dto,
-      int currentUserId)
+
+public async Task<BlogResponseDto?> UpdateAsync(
+    UpdateBlogDto dto,
+    int currentUserId)
         {
             var blog = await _repository.GetByIdAsync(dto.Id);
 
             if (blog == null)
                 return null;
 
+            // ---------------------------------
+            // Category Validation
+            // ---------------------------------
+
+            BlogCategory? category = null;
+
+            if (dto.CategoryId.HasValue)
+            {
+                category = await _categoryRepository.GetByIdAsync(
+                    dto.CategoryId.Value);
+
+                if (category == null || !category.IsActive)
+                {
+                    throw new Exception(
+                        "Selected blog category is invalid.");
+                }
+            }
+
+            // ---------------------------------
+            // Update Blog Information
+            // ---------------------------------
+
             blog.Title = dto.Title;
-            blog.Category = dto.Category;
+
+            // New category relationship
+            blog.CategoryId = dto.CategoryId;
+
+            // Temporary legacy category synchronization
+            // We will remove this later when the old
+            // Category column is completely migrated.
+            blog.Category = category?.Name;
+
             blog.MetaDescription = dto.MetaDescription;
             blog.ShortDescription = dto.ShortDescription;
             blog.BlogDetails = dto.BlogDetails;
@@ -132,13 +177,25 @@ namespace RedBerryCorporate.Services
             blog.ReadTime =
                 CalculateReadTime(dto.BlogDetails);
 
+            // ---------------------------------
+            // Slug
+            // ---------------------------------
+
             blog.Slug =
                 string.IsNullOrWhiteSpace(dto.Slug)
-                ? SlugHelper.Generate(dto.Title)
-                : SlugHelper.Generate(dto.Slug);
+                    ? SlugHelper.Generate(dto.Title)
+                    : SlugHelper.Generate(dto.Slug);
 
-            if (await _repository.SlugExistsAsync(blog.Slug, blog.Id))
+            if (await _repository.SlugExistsAsync(
+                blog.Slug,
+                blog.Id))
+            {
                 throw new Exception("Slug already exists.");
+            }
+
+            // ---------------------------------
+            // Cover Image
+            // ---------------------------------
 
             if (dto.CoverImage != null)
             {
@@ -152,12 +209,16 @@ namespace RedBerryCorporate.Services
                         _environment);
             }
 
+            // ---------------------------------
+            // Audit Information
+            // ---------------------------------
+
             blog.UpdatedAt = DateTime.UtcNow;
             blog.UpdatedByUserId = currentUserId;
 
-            //---------------------------------
+            // ---------------------------------
             // Schedule Logic
-            //---------------------------------
+            // ---------------------------------
 
             if (dto.PublishingDate.HasValue)
             {
@@ -177,25 +238,36 @@ namespace RedBerryCorporate.Services
                 }
             }
 
+            // ---------------------------------
+            // Save Blog
+            // ---------------------------------
+
             blog = await _repository.UpdateAsync(blog);
+
+            // ---------------------------------
+            // Sitemap
+            // ---------------------------------
 
             if (blog.Status == BlogStatus.Published)
                 await _sitemap.GenerateAsync();
 
-            // notification api call here
+            // ---------------------------------
+            // Notification
+            // ---------------------------------
+
             await _notificationService.CreateAsync(
-    title: "Blog Updated",
-    message: $"Blog '{blog.Title}' was updated successfully.",
-    type: NotificationType.Info,
-    action: NotificationAction.Updated,
-    module: NotificationModule.Blog,
-    entityId: blog.Id,
-    currentUserId: currentUserId);
+                title: "Blog Updated",
+                message: $"Blog '{blog.Title}' was updated successfully.",
+                type: NotificationType.Info,
+                action: NotificationAction.Updated,
+                module: NotificationModule.Blog,
+                entityId: blog.Id,
+                currentUserId: currentUserId);
 
-
-        
             return MapToDto(blog);
         }
+
+
 
         public async Task<bool> DeleteAsync(
     int id,

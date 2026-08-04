@@ -14,9 +14,22 @@ namespace RedBerryCorporate.Data
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<BlueprintSubmission> BlueprintSubmissions { get; set; }
         public DbSet<Blog> Blogs { get; set; }
+        public DbSet<BlogCategory> BlogCategories { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<TblEmployee> TblEmployees { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+
+        protected override void OnModelCreating(
+            ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Blog>()
+                .HasOne(x => x.CategoryNavigation)
+                .WithMany()
+                .HasForeignKey(x => x.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

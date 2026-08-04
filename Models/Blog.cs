@@ -17,6 +17,9 @@ namespace RedBerryCorporate.Models
 
         [MaxLength(100)]
         public string? Category { get; set; }
+        public int? CategoryId { get; set; }
+
+        public BlogCategory? CategoryNavigation { get; set; }
 
         [MaxLength(500)]
         public string? MetaDescription { get; set; }
