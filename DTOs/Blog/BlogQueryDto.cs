@@ -9,8 +9,9 @@ namespace RedBerryCorporate.DTOs.Blog
         public int PageSize { get; set; } = 10;
 
         public string? Search { get; set; }
+        public int? CategoryId { get; set; }
 
-        public string? Category { get; set; }
+        //public string? Category { get; set; }
 
         public BlogStatus? Status { get; set; }
 

@@ -39,7 +39,7 @@ namespace RedBerryCorporate.Interfaces.Blog
 
         Task<List<RelatedBlogDto>> GetRelatedBlogsAsync(
             int currentBlogId,
-            string? category,
+            int? categoryId,
             int take = 3);
 
         Task<List<BlogCardDto>> GetBlogCardsAsync();
