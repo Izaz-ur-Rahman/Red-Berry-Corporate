@@ -106,12 +106,17 @@ namespace RedBerryCorporate.Services
             {
                 blog.Status = BlogStatus.Draft;
             }
+            blog = await _repository.AddAsync(blog);
+            blog = await _repository.GetByIdAsync(blog.Id);
+
+            if (blog == null)
+                throw new Exception("Blog could not be retrieved after creation.");
 
             if (blog.Status == BlogStatus.Published)
                 await _sitemap.GenerateAsync();
 
             // notificatio api call here 
-            blog = await _repository.AddAsync(blog);
+    
             await _notificationService.CreateAsync(
     title: "New Blog Created",
     message: $"Blog '{blog.Title}' was created successfully.",
@@ -243,7 +248,10 @@ public async Task<BlogResponseDto?> UpdateAsync(
             // ---------------------------------
 
             blog = await _repository.UpdateAsync(blog);
+            blog = await _repository.GetByIdAsync(blog.Id);
 
+            if (blog == null)
+                return null;
             // ---------------------------------
             // Sitemap
             // ---------------------------------
@@ -451,12 +459,28 @@ public async Task<BlogResponseDto?> UpdateAsync(
             return new BlogResponseDto
             {
                 Id = blog.Id,
+
                 Title = blog.Title,
-                Category = blog.Category,
+
+                Category = blog.CategoryNavigation == null
+                    ? null
+                    : new BlogCategoryInfoDto
+                    {
+                        Id = blog.CategoryNavigation.Id,
+                        Name = blog.CategoryNavigation.Name,
+                        Slug = blog.CategoryNavigation.Slug
+                    },
+
                 MetaDescription = blog.MetaDescription,
+
+                ShortDescription = blog.ShortDescription,
+
                 Slug = blog.Slug,
+
                 CoverImage = blog.CoverImage,
+
                 BlogDetails = blog.BlogDetails,
+
                 Tags = blog.Tags,
 
                 Status = blog.Status.ToString(),
@@ -529,9 +553,9 @@ public async Task<BlogResponseDto?> UpdateAsync(
             //---------------------------------------
 
             blog.RelatedBlogs =
-                await _repository.GetRelatedBlogsAsync(
-                    blog.Id,
-                    blog.Category);
+       await _repository.GetRelatedBlogsAsync(
+           blog.Id,
+           blog.Category?.Id);
 
             return blog;
         }

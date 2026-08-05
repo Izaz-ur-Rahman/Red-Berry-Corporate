@@ -8,7 +8,8 @@
 
         public string Slug { get; set; }
 
-        public string Category { get; set; }
+        //public string Category { get; set; }
+        public BlogCategoryInfoDto? Category { get; set; }
 
         public string CoverImage { get; set; }
 

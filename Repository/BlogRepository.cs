@@ -132,6 +132,7 @@ namespace RedBerryCorporate.Repository
         public async Task<Blog?> GetByIdAsync(int id)
         {
             return await _context.Blogs
+                    .Include(x => x.CategoryNavigation)
       .FirstOrDefaultAsync(x =>
           x.Id == id &&
           !x.IsDeleted &&
@@ -141,71 +142,88 @@ namespace RedBerryCorporate.Repository
         public async Task<Blog?> GetBySlugAsync(string slug)
         {
             return await _context.Blogs
-      .FirstOrDefaultAsync(x =>
-          x.Slug == slug &&
-          !x.IsDeleted &&
-          x.IsActive &&
-          x.Status == BlogStatus.Published);
+                .Include(x => x.CategoryNavigation)
+                .FirstOrDefaultAsync(x =>
+                    x.Slug == slug &&
+                    !x.IsDeleted &&
+                    x.IsActive &&
+                    x.Status == BlogStatus.Published);
         }
 
-      
-        public async Task<(List<BlogResponseDto> Blogs, int TotalCount)> GetAllAsync(BlogQueryDto query)
+
+        public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
+            GetAllAsync(BlogQueryDto query)
         {
-            //      IQueryable<Blog> blogs =
-            //_context.Blogs.Where(x => !x.IsDeleted && x.IsActive);
             var blogs =
-          from blog in _context.Blogs
+                from blog in _context.Blogs
 
-          join user in _context.Users
-              on blog.CreatedByUserId equals user.ID
+                join user in _context.Users
+                    on blog.CreatedByUserId equals user.ID
 
-          join employee in _context.TblEmployees
-              on user.EmpId equals employee.ID
+                join employee in _context.TblEmployees
+                    on user.EmpId equals employee.ID
 
-          where !blog.IsDeleted &&
-                blog.IsActive
+                where !blog.IsDeleted &&
+                      blog.IsActive
 
-          select new BlogResponseDto
-          {
-              Id = blog.Id,
+                select new BlogResponseDto
+                {
+                    Id = blog.Id,
 
-              Title = blog.Title,
+                    Title = blog.Title,
 
-              Category = blog.Category,
+                    //Category = blog.CategoryNavigation == null
+                    //    ? null
+                    //    : new BlogCategoryInfoDto
+                    //    {
+                    //        Id = blog.CategoryNavigation.Id,
+                    //        Name = blog.CategoryNavigation.Name,
+                    //        Slug = blog.CategoryNavigation.Slug
+                    //    },
+                    Category = blog.CategoryNavigation == null
+    ? null
+    : new BlogCategoryInfoDto
+    {
+        Id = blog.CategoryNavigation.Id,
+        Name = blog.CategoryNavigation.Name,
+        Slug = blog.CategoryNavigation.Slug
+    },
 
-              MetaDescription = blog.MetaDescription,
-              ShortDescription = blog.ShortDescription,
+                    MetaDescription = blog.MetaDescription,
 
-              Slug = blog.Slug,
+                    ShortDescription = blog.ShortDescription,
 
-              CoverImage = blog.CoverImage,
+                    Slug = blog.Slug,
 
-              BlogDetails = blog.BlogDetails,
+                    CoverImage = blog.CoverImage,
 
-              Tags = blog.Tags,
+                    BlogDetails = blog.BlogDetails,
 
-              Status = blog.Status.ToString(),
+                    Tags = blog.Tags,
 
-              EntryDate = blog.CreatedAt,
+                    Status = blog.Status.ToString(),
 
-              PublishingDate = blog.PublishingDate,
+                    EntryDate = blog.CreatedAt,
 
-              ReadTime = blog.ReadTime,
+                    PublishingDate = blog.PublishingDate,
 
-              OpenCount = blog.OpenCount,
+                    ReadTime = blog.ReadTime,
 
-              Author = new BlogCardAuthorDto
-              {
-                  Name = employee.FULL_NAME,
+                    OpenCount = blog.OpenCount,
 
-                  Designation = employee.Position,
+                    Author = new BlogCardAuthorDto
+                    {
+                        Name = employee.FULL_NAME,
 
-                  ProfileImage =
-                      !string.IsNullOrWhiteSpace(employee.Photo)
-                          ? employee.Photo
-                          : employee.ProfilePicName
-              }
-          };
+                        Designation = employee.Position,
+
+                        ProfileImage =
+                            !string.IsNullOrWhiteSpace(employee.Photo)
+                                ? employee.Photo
+                                : employee.ProfilePicName
+                    }
+                };
+
             //------------------------------------
             // Search
             //------------------------------------
@@ -220,35 +238,30 @@ namespace RedBerryCorporate.Repository
             // Category
             //------------------------------------
 
-            if (!string.IsNullOrWhiteSpace(query.Category))
+            if (query.CategoryId.HasValue)
             {
                 blogs = blogs.Where(x =>
-                    x.Category == query.Category);
+                    x.Category != null &&
+                    x.Category.Id == query.CategoryId.Value);
             }
 
             //------------------------------------
             // Status
             //------------------------------------
+
             if (query.Status.HasValue)
             {
                 blogs = blogs.Where(x =>
-                    x.Status == query.Status.ToString());
+                    x.Status == query.Status.Value.ToString());
             }
-            //if (query.Status.HasValue)
-            //{
-            //    blogs = blogs.Where(x =>
-            //        x.Status == query.Status);
-            //}
 
             //------------------------------------
             // Sorting
             //------------------------------------
+
             blogs = query.SortBy.ToLower() == "oldest"
-    ? blogs.OrderBy(x => x.EntryDate)
-    : blogs.OrderByDescending(x => x.EntryDate);
-            //       blogs = query.SortBy.ToLower() == "oldest"
-            //? blogs.OrderBy(x => x.CreatedAt)
-            //: blogs.OrderByDescending(x => x.CreatedAt);
+                ? blogs.OrderBy(x => x.EntryDate)
+                : blogs.OrderByDescending(x => x.EntryDate);
 
             //------------------------------------
             // Total Count
@@ -270,12 +283,13 @@ namespace RedBerryCorporate.Repository
         public async Task<List<Blog>> GetPublishedAsync()
         {
             return await _context.Blogs
-     .Where(x =>
-         !x.IsDeleted &&
-         x.IsActive &&
-         x.Status == BlogStatus.Published)
-     .OrderByDescending(x => x.PublishingDate)
-     .ToListAsync();
+                .Include(x => x.CategoryNavigation)
+                .Where(x =>
+                    !x.IsDeleted &&
+                    x.IsActive &&
+                    x.Status == BlogStatus.Published)
+                .OrderByDescending(x => x.PublishingDate)
+                .ToListAsync();
         }
 
         public async Task<bool> IncrementOpenCountAsync(int id)
@@ -309,91 +323,100 @@ namespace RedBerryCorporate.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<BlogViewerResponseDto?> GetViewerAsync(string slug)
+        public async Task<BlogViewerResponseDto?> GetViewerAsync(
+     string slug)
         {
-            var data = await
-            (
-                from blog in _context.Blogs.AsNoTracking()
+            var data =
+                await
+                (
+                    from blog in _context.Blogs.AsNoTracking()
 
-                join user in _context.Users
-                    on blog.CreatedByUserId equals user.ID
+                    join user in _context.Users
+                        on blog.CreatedByUserId equals user.ID
 
-                join employee in _context.TblEmployees
-                    on user.EmpId equals employee.ID
+                    join employee in _context.TblEmployees
+                        on user.EmpId equals employee.ID
 
-                where blog.Slug == slug
-                    && blog.Status == BlogStatus.Published
-                    && blog.IsDeleted == false
-                    && blog.IsActive
+                    where blog.Slug == slug
+                        && blog.Status == BlogStatus.Published
+                        && !blog.IsDeleted
+                        && blog.IsActive
 
-                select new BlogViewerResponseDto
-                {
-                    Id = blog.Id,
-
-                    Title = blog.Title,
-
-                    Slug = blog.Slug,
-
-                    Category = blog.Category,
-
-                    CoverImage = blog.CoverImage,
-
-                    MetaDescription = blog.MetaDescription,
-
-                    BlogDetails = blog.BlogDetails,
-
-                    Tags = blog.Tags,
-
-                    ReadTime = blog.ReadTime,
-
-                    OpenCount = blog.OpenCount,
-
-                    PublishingDate = blog.PublishingDate,
-
-                    Author = new BlogAuthorDto
+                    select new BlogViewerResponseDto
                     {
-                        UserId = user.ID,
+                        Id = blog.Id,
 
-                        FullName = employee.FULL_NAME,
+                        Title = blog.Title,
 
-                        Designation = employee.Position,
+                        Slug = blog.Slug,
 
-                        Bio = employee.Bio,
+                        Category = blog.CategoryNavigation == null
+                            ? null
+                            : new BlogCategoryInfoDto
+                            {
+                                Id = blog.CategoryNavigation.Id,
+                                Name = blog.CategoryNavigation.Name,
+                                Slug = blog.CategoryNavigation.Slug
+                            },
 
-                        Email = employee.EMAIL_ADDRESS,
+                        CoverImage = blog.CoverImage,
 
-                        Phone = employee.MOBILE_SMS,
+                        MetaDescription = blog.MetaDescription,
 
-                        LinkedIn = employee.LinkedIn,
+                        BlogDetails = blog.BlogDetails,
 
-                        Facebook = employee.Facebook,
+                        Tags = blog.Tags,
 
-                        Twitter = employee.Twitter,
+                        ReadTime = blog.ReadTime,
 
-                        Whatsapp = employee.WhatsappNo,
+                        OpenCount = blog.OpenCount,
 
-                        ProfileImage =
-                            !string.IsNullOrWhiteSpace(employee.Photo)
-                                ? employee.Photo
-                                : employee.ProfilePicName
+                        PublishingDate = blog.PublishingDate,
+
+                        Author = new BlogAuthorDto
+                        {
+                            UserId = user.ID,
+
+                            FullName = employee.FULL_NAME,
+
+                            Designation = employee.Position,
+
+                            Bio = employee.Bio,
+
+                            Email = employee.EMAIL_ADDRESS,
+
+                            Phone = employee.MOBILE_SMS,
+
+                            LinkedIn = employee.LinkedIn,
+
+                            Facebook = employee.Facebook,
+
+                            Twitter = employee.Twitter,
+
+                            Whatsapp = employee.WhatsappNo,
+
+                            ProfileImage =
+                                !string.IsNullOrWhiteSpace(employee.Photo)
+                                    ? employee.Photo
+                                    : employee.ProfilePicName
+                        }
                     }
-                }
-            )
-            .FirstOrDefaultAsync();
+                )
+                .FirstOrDefaultAsync();
 
             return data;
         }
 
         public async Task<List<RelatedBlogDto>> GetRelatedBlogsAsync(
-    int currentBlogId,
-    string? category,
-    int take = 3)
+      int currentBlogId,
+      int? categoryId,
+      int take = 3)
         {
             return await _context.Blogs
                 .AsNoTracking()
                 .Where(x =>
                     x.Id != currentBlogId &&
-                    x.Category == category &&
+                    x.CategoryId == categoryId &&
                     x.Status == BlogStatus.Published &&
                     !x.IsDeleted &&
                     x.IsActive)
@@ -414,7 +437,6 @@ namespace RedBerryCorporate.Repository
                     ReadTime = x.ReadTime
                 })
                 .ToListAsync();
-
         }
         public async Task<List<BlogCardDto>> GetBlogCardsAsync()
         {

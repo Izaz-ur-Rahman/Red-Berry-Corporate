@@ -8,7 +8,9 @@ namespace RedBerryCorporate.DTOs.Blog
 
         public string Title { get; set; }
 
-        public string Category { get; set; }
+        // public string Category { get; set; }
+        public BlogCategoryInfoDto? Category { get; set; }
+
 
         public string MetaDescription { get; set; }
         public string? ShortDescription { get; set; }
