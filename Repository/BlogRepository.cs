@@ -172,14 +172,22 @@ namespace RedBerryCorporate.Repository
 
                     Title = blog.Title,
 
+                    //Category = blog.CategoryNavigation == null
+                    //    ? null
+                    //    : new BlogCategoryInfoDto
+                    //    {
+                    //        Id = blog.CategoryNavigation.Id,
+                    //        Name = blog.CategoryNavigation.Name,
+                    //        Slug = blog.CategoryNavigation.Slug
+                    //    },
                     Category = blog.CategoryNavigation == null
-                        ? null
-                        : new BlogCategoryInfoDto
-                        {
-                            Id = blog.CategoryNavigation.Id,
-                            Name = blog.CategoryNavigation.Name,
-                            Slug = blog.CategoryNavigation.Slug
-                        },
+    ? null
+    : new BlogCategoryInfoDto
+    {
+        Id = blog.CategoryNavigation.Id,
+        Name = blog.CategoryNavigation.Name,
+        Slug = blog.CategoryNavigation.Slug
+    },
 
                     MetaDescription = blog.MetaDescription,
 
