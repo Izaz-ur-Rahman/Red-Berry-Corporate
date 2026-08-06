@@ -16,9 +16,9 @@ namespace RedBerryCorporate.Models
         public string Slug { get; set; }
 
 
-        public int? CategoryId { get; set; }
+        public int CategoryId { get; set; }
 
-        public BlogCategory? CategoryNavigation { get; set; }
+        public BlogCategory CategoryNavigation { get; set; } = null!;
 
         [MaxLength(500)]
         public string? MetaDescription { get; set; }
