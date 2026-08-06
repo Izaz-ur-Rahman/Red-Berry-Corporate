@@ -151,8 +151,10 @@ namespace RedBerryCorporate.Repository
         }
 
 
-        public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
-            GetAllAsync(BlogQueryDto query)
+     
+
+public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
+    GetAllAsync(BlogQueryDto query)
         {
             var blogs =
                 from blog in _context.Blogs
@@ -166,62 +168,11 @@ namespace RedBerryCorporate.Repository
                 where !blog.IsDeleted &&
                       blog.IsActive
 
-                select new BlogResponseDto
+                select new
                 {
-                    Id = blog.Id,
-
-                    Title = blog.Title,
-
-                    //Category = blog.CategoryNavigation == null
-                    //    ? null
-                    //    : new BlogCategoryInfoDto
-                    //    {
-                    //        Id = blog.CategoryNavigation.Id,
-                    //        Name = blog.CategoryNavigation.Name,
-                    //        Slug = blog.CategoryNavigation.Slug
-                    //    },
-                    Category = blog.CategoryNavigation == null
-    ? null
-    : new BlogCategoryInfoDto
-    {
-        Id = blog.CategoryNavigation.Id,
-        Name = blog.CategoryNavigation.Name,
-        Slug = blog.CategoryNavigation.Slug
-    },
-
-                    MetaDescription = blog.MetaDescription,
-
-                    ShortDescription = blog.ShortDescription,
-
-                    Slug = blog.Slug,
-
-                    CoverImage = blog.CoverImage,
-
-                    BlogDetails = blog.BlogDetails,
-
-                    Tags = blog.Tags,
-
-                    Status = blog.Status.ToString(),
-
-                    EntryDate = blog.CreatedAt,
-
-                    PublishingDate = blog.PublishingDate,
-
-                    ReadTime = blog.ReadTime,
-
-                    OpenCount = blog.OpenCount,
-
-                    Author = new BlogCardAuthorDto
-                    {
-                        Name = employee.FULL_NAME,
-
-                        Designation = employee.Position,
-
-                        ProfileImage =
-                            !string.IsNullOrWhiteSpace(employee.Photo)
-                                ? employee.Photo
-                                : employee.ProfilePicName
-                    }
+                    Blog = blog,
+                    User = user,
+                    Employee = employee
                 };
 
             //------------------------------------
@@ -231,28 +182,27 @@ namespace RedBerryCorporate.Repository
             if (!string.IsNullOrWhiteSpace(query.Search))
             {
                 blogs = blogs.Where(x =>
-                    x.Title.Contains(query.Search));
+                    x.Blog.Title.Contains(query.Search));
             }
 
             //------------------------------------
-            // Category
+            // Category Filter
             //------------------------------------
 
             if (query.CategoryId.HasValue)
             {
                 blogs = blogs.Where(x =>
-                    x.Category != null &&
-                    x.Category.Id == query.CategoryId.Value);
+                    x.Blog.CategoryId == query.CategoryId.Value);
             }
 
             //------------------------------------
-            // Status
+            // Status Filter
             //------------------------------------
 
             if (query.Status.HasValue)
             {
                 blogs = blogs.Where(x =>
-                    x.Status == query.Status.Value.ToString());
+                    x.Blog.Status == query.Status.Value);
             }
 
             //------------------------------------
@@ -260,8 +210,8 @@ namespace RedBerryCorporate.Repository
             //------------------------------------
 
             blogs = query.SortBy.ToLower() == "oldest"
-                ? blogs.OrderBy(x => x.EntryDate)
-                : blogs.OrderByDescending(x => x.EntryDate);
+                ? blogs.OrderBy(x => x.Blog.CreatedAt)
+                : blogs.OrderByDescending(x => x.Blog.CreatedAt);
 
             //------------------------------------
             // Total Count
@@ -276,10 +226,60 @@ namespace RedBerryCorporate.Repository
             var data = await blogs
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
+                .Select(x => new BlogResponseDto
+                {
+                    Id = x.Blog.Id,
+
+                    Title = x.Blog.Title,
+
+                    Category = x.Blog.CategoryNavigation == null
+                        ? null
+                        : new BlogCategoryInfoDto
+                        {
+                            Id = x.Blog.CategoryNavigation.Id,
+                            Name = x.Blog.CategoryNavigation.Name,
+                            Slug = x.Blog.CategoryNavigation.Slug
+                        },
+
+                    MetaDescription = x.Blog.MetaDescription,
+
+                    ShortDescription = x.Blog.ShortDescription,
+
+                    Slug = x.Blog.Slug,
+
+                    CoverImage = x.Blog.CoverImage,
+
+                    BlogDetails = x.Blog.BlogDetails,
+
+                    Tags = x.Blog.Tags,
+
+                    Status = x.Blog.Status.ToString(),
+
+                    EntryDate = x.Blog.CreatedAt,
+
+                    PublishingDate = x.Blog.PublishingDate,
+
+                    ReadTime = x.Blog.ReadTime,
+
+                    OpenCount = x.Blog.OpenCount,
+
+                    Author = new BlogCardAuthorDto
+                    {
+                        Name = x.Employee.FULL_NAME,
+
+                        Designation = x.Employee.Position,
+
+                        ProfileImage =
+                            !string.IsNullOrWhiteSpace(x.Employee.Photo)
+                                ? x.Employee.Photo
+                                : x.Employee.ProfilePicName
+                    }
+                })
                 .ToListAsync();
 
             return (data, total);
         }
+
         public async Task<List<Blog>> GetPublishedAsync()
         {
             return await _context.Blogs
@@ -438,10 +438,59 @@ namespace RedBerryCorporate.Repository
                 })
                 .ToListAsync();
         }
-        public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        //public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        //{
+        //    return await
+        //    (
+        //        from blog in _context.Blogs.AsNoTracking()
+
+        //        join user in _context.Users
+        //            on blog.CreatedByUserId equals user.ID
+
+        //        join employee in _context.TblEmployees
+        //            on user.EmpId equals employee.ID
+
+        //        where blog.Status == BlogStatus.Published
+        //              && !blog.IsDeleted
+        //              && blog.IsActive
+
+        //        orderby blog.PublishingDate descending
+
+        //        select new BlogCardDto
+        //        {
+        //            Id = blog.Id,
+
+        //            Title = blog.Title,
+
+        //            Slug = blog.Slug,
+
+        //            CoverImage = blog.CoverImage,
+
+        //            ShortDescription = blog.ShortDescription,
+
+        //            PublishingDate = blog.PublishingDate,
+
+        //            ReadTime = blog.ReadTime,
+
+        //            Author = new BlogCardAuthorDto
+        //            {
+        //                Name = employee.FULL_NAME,
+
+        //                Designation = employee.Position,
+
+        //                ProfileImage =
+        //                    !string.IsNullOrWhiteSpace(employee.Photo)
+        //                        ? employee.Photo
+        //                        : employee.ProfilePicName
+        //            }
+        //        }
+
+        //    ).ToListAsync();
+        //}
+        public async Task<List<BlogCardDto>> GetBlogCardsAsync(
+    string? categorySlug = null)
         {
-            return await
-            (
+            var query =
                 from blog in _context.Blogs.AsNoTracking()
 
                 join user in _context.Users
@@ -454,40 +503,67 @@ namespace RedBerryCorporate.Repository
                       && !blog.IsDeleted
                       && blog.IsActive
 
-                orderby blog.PublishingDate descending
-
-                select new BlogCardDto
+                select new
                 {
-                    Id = blog.Id,
+                    Blog = blog,
+                    Employee = employee
+                };
 
-                    Title = blog.Title,
+            //---------------------------------------
+            // Category Filter by Slug
+            //---------------------------------------
 
-                    Slug = blog.Slug,
+            if (!string.IsNullOrWhiteSpace(categorySlug))
+            {
+                categorySlug = categorySlug.Trim().ToLower();
 
-                    CoverImage = blog.CoverImage,
+                query = query.Where(x =>
+                    x.Blog.CategoryNavigation != null &&
+                    x.Blog.CategoryNavigation.Slug.ToLower() == categorySlug);
+            }
 
-                    ShortDescription = blog.ShortDescription,
+            //---------------------------------------
+            // Sorting
+            //---------------------------------------
 
-                    PublishingDate = blog.PublishingDate,
+            query = query.OrderByDescending(
+                x => x.Blog.PublishingDate);
 
-                    ReadTime = blog.ReadTime,
+            //---------------------------------------
+            // Projection
+            //---------------------------------------
+
+            return await query
+                .Select(x => new BlogCardDto
+                {
+                    Id = x.Blog.Id,
+
+                    Title = x.Blog.Title,
+
+                    Slug = x.Blog.Slug,
+
+                    CoverImage = x.Blog.CoverImage,
+
+                    ShortDescription = x.Blog.ShortDescription,
+
+                    PublishingDate = x.Blog.PublishingDate,
+
+                    ReadTime = x.Blog.ReadTime,
 
                     Author = new BlogCardAuthorDto
                     {
-                        Name = employee.FULL_NAME,
+                        Name = x.Employee.FULL_NAME,
 
-                        Designation = employee.Position,
+                        Designation = x.Employee.Position,
 
                         ProfileImage =
-                            !string.IsNullOrWhiteSpace(employee.Photo)
-                                ? employee.Photo
-                                : employee.ProfilePicName
+                            !string.IsNullOrWhiteSpace(x.Employee.Photo)
+                                ? x.Employee.Photo
+                                : x.Employee.ProfilePicName
                     }
-                }
-
-            ).ToListAsync();
+                })
+                .ToListAsync();
         }
-
         public async Task<Blog?> GetByIdForUpdateAsync(int id)
         {
             return await _context.Blogs
