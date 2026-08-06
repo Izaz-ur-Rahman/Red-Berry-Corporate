@@ -169,10 +169,7 @@ public async Task<BlogResponseDto?> UpdateAsync(
             // New category relationship
             blog.CategoryId = dto.CategoryId;
 
-            // Temporary legacy category synchronization
-            // We will remove this later when the old
-            // Category column is completely migrated.
-            blog.Category = category?.Name;
+     
 
             blog.MetaDescription = dto.MetaDescription;
             blog.ShortDescription = dto.ShortDescription;
