@@ -46,7 +46,8 @@ namespace RedBerryCorporate.Interfaces.Blog
     int currentUserId);
 
         Task<BlogViewerResponseDto?> ViewAsync(string slug);
-        Task<List<BlogCardDto>> GetBlogCardsAsync();
-
+        //Task<List<BlogCardDto>> GetBlogCardsAsync();
+        Task<List<BlogCardDto>> GetBlogCardsAsync(
+    string? categorySlug = null);
     }
 }

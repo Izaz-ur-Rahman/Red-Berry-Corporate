@@ -560,9 +560,14 @@ public async Task<BlogResponseDto?> UpdateAsync(
             return blog;
         }
 
-        public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        //public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        //{
+        //    return await _repository.GetBlogCardsAsync();
+        //}
+        public async Task<List<BlogCardDto>> GetBlogCardsAsync(
+    string? categorySlug = null)
         {
-            return await _repository.GetBlogCardsAsync();
+            return await _repository.GetBlogCardsAsync(categorySlug);
         }
         private static int CalculateReadTime(string? content)
         {

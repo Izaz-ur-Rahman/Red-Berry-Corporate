@@ -438,10 +438,59 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
                 })
                 .ToListAsync();
         }
-        public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        //public async Task<List<BlogCardDto>> GetBlogCardsAsync()
+        //{
+        //    return await
+        //    (
+        //        from blog in _context.Blogs.AsNoTracking()
+
+        //        join user in _context.Users
+        //            on blog.CreatedByUserId equals user.ID
+
+        //        join employee in _context.TblEmployees
+        //            on user.EmpId equals employee.ID
+
+        //        where blog.Status == BlogStatus.Published
+        //              && !blog.IsDeleted
+        //              && blog.IsActive
+
+        //        orderby blog.PublishingDate descending
+
+        //        select new BlogCardDto
+        //        {
+        //            Id = blog.Id,
+
+        //            Title = blog.Title,
+
+        //            Slug = blog.Slug,
+
+        //            CoverImage = blog.CoverImage,
+
+        //            ShortDescription = blog.ShortDescription,
+
+        //            PublishingDate = blog.PublishingDate,
+
+        //            ReadTime = blog.ReadTime,
+
+        //            Author = new BlogCardAuthorDto
+        //            {
+        //                Name = employee.FULL_NAME,
+
+        //                Designation = employee.Position,
+
+        //                ProfileImage =
+        //                    !string.IsNullOrWhiteSpace(employee.Photo)
+        //                        ? employee.Photo
+        //                        : employee.ProfilePicName
+        //            }
+        //        }
+
+        //    ).ToListAsync();
+        //}
+        public async Task<List<BlogCardDto>> GetBlogCardsAsync(
+    string? categorySlug = null)
         {
-            return await
-            (
+            var query =
                 from blog in _context.Blogs.AsNoTracking()
 
                 join user in _context.Users
@@ -454,40 +503,67 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
                       && !blog.IsDeleted
                       && blog.IsActive
 
-                orderby blog.PublishingDate descending
-
-                select new BlogCardDto
+                select new
                 {
-                    Id = blog.Id,
+                    Blog = blog,
+                    Employee = employee
+                };
 
-                    Title = blog.Title,
+            //---------------------------------------
+            // Category Filter by Slug
+            //---------------------------------------
 
-                    Slug = blog.Slug,
+            if (!string.IsNullOrWhiteSpace(categorySlug))
+            {
+                categorySlug = categorySlug.Trim().ToLower();
 
-                    CoverImage = blog.CoverImage,
+                query = query.Where(x =>
+                    x.Blog.CategoryNavigation != null &&
+                    x.Blog.CategoryNavigation.Slug.ToLower() == categorySlug);
+            }
 
-                    ShortDescription = blog.ShortDescription,
+            //---------------------------------------
+            // Sorting
+            //---------------------------------------
 
-                    PublishingDate = blog.PublishingDate,
+            query = query.OrderByDescending(
+                x => x.Blog.PublishingDate);
 
-                    ReadTime = blog.ReadTime,
+            //---------------------------------------
+            // Projection
+            //---------------------------------------
+
+            return await query
+                .Select(x => new BlogCardDto
+                {
+                    Id = x.Blog.Id,
+
+                    Title = x.Blog.Title,
+
+                    Slug = x.Blog.Slug,
+
+                    CoverImage = x.Blog.CoverImage,
+
+                    ShortDescription = x.Blog.ShortDescription,
+
+                    PublishingDate = x.Blog.PublishingDate,
+
+                    ReadTime = x.Blog.ReadTime,
 
                     Author = new BlogCardAuthorDto
                     {
-                        Name = employee.FULL_NAME,
+                        Name = x.Employee.FULL_NAME,
 
-                        Designation = employee.Position,
+                        Designation = x.Employee.Position,
 
                         ProfileImage =
-                            !string.IsNullOrWhiteSpace(employee.Photo)
-                                ? employee.Photo
-                                : employee.ProfilePicName
+                            !string.IsNullOrWhiteSpace(x.Employee.Photo)
+                                ? x.Employee.Photo
+                                : x.Employee.ProfilePicName
                     }
-                }
-
-            ).ToListAsync();
+                })
+                .ToListAsync();
         }
-
         public async Task<Blog?> GetByIdForUpdateAsync(int id)
         {
             return await _context.Blogs
