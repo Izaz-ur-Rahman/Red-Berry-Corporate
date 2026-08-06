@@ -471,7 +471,7 @@ public async Task<BlogResponseDto?> UpdateAsync(
                         Slug = blog.CategoryNavigation.Slug
                     },
 
-                MetaDescription = blog.MetaDescription,
+                 MetaDescription = blog.MetaDescription,
 
                 ShortDescription = blog.ShortDescription,
 
