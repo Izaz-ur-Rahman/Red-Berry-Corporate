@@ -318,16 +318,35 @@ namespace RedBerryCorporate.Controllers
         }
 
         #endregion
+        //#region Blog Cards
+
+        //[AllowAnonymous]
+        //[HttpGet("Cards")]
+        //public async Task<IActionResult> Cards()
+        //{
+        //    var result =
+        //        await _blogService.GetBlogCardsAsync();
+
+
+        //    return Ok(new ApiResponse<List<BlogCardDto>>
+        //    {
+        //        Success = true,
+        //        Message = "Blogs retrieved successfully.",
+        //        Data = result
+        //    });
+        //}
+
+        //#endregion
         #region Blog Cards
 
         [AllowAnonymous]
         [HttpGet("Cards")]
-        public async Task<IActionResult> Cards()
+        public async Task<IActionResult> Cards(
+            [FromQuery] string? categorySlug = null)
         {
             var result =
-                await _blogService.GetBlogCardsAsync();
+                await _blogService.GetBlogCardsAsync(categorySlug);
 
-          
             return Ok(new ApiResponse<List<BlogCardDto>>
             {
                 Success = true,
