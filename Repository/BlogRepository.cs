@@ -151,10 +151,10 @@ namespace RedBerryCorporate.Repository
         }
 
 
-     
 
-public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
-    GetAllAsync(BlogQueryDto query)
+
+        public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
+            GetAllAsync(BlogQueryDto query)
         {
             var blogs =
                 from blog in _context.Blogs
@@ -181,8 +181,10 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
 
             if (!string.IsNullOrWhiteSpace(query.Search))
             {
+                var search = query.Search.Trim();
+
                 blogs = blogs.Where(x =>
-                    x.Blog.Title.Contains(query.Search));
+                    x.Blog.Title.Contains(search));
             }
 
             //------------------------------------
@@ -209,7 +211,7 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
             // Sorting
             //------------------------------------
 
-            blogs = query.SortBy.ToLower() == "oldest"
+            blogs = query.SortBy?.ToLower() == "oldest"
                 ? blogs.OrderBy(x => x.Blog.CreatedAt)
                 : blogs.OrderByDescending(x => x.Blog.CreatedAt);
 
@@ -217,7 +219,7 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
             // Total Count
             //------------------------------------
 
-            int total = await blogs.CountAsync();
+            var total = await blogs.CountAsync();
 
             //------------------------------------
             // Pagination
@@ -232,12 +234,18 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
 
                     Title = x.Blog.Title,
 
+                    //------------------------------------
+                    // Category
+                    //------------------------------------
+
                     Category = x.Blog.CategoryNavigation == null
                         ? null
                         : new BlogCategoryInfoDto
                         {
                             Id = x.Blog.CategoryNavigation.Id,
+
                             Name = x.Blog.CategoryNavigation.Name,
+
                             Slug = x.Blog.CategoryNavigation.Slug
                         },
 
@@ -262,6 +270,10 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
                     ReadTime = x.Blog.ReadTime,
 
                     OpenCount = x.Blog.OpenCount,
+
+                    //------------------------------------
+                    // Author
+                    //------------------------------------
 
                     Author = new BlogCardAuthorDto
                     {
@@ -324,12 +336,13 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
         }
 
         public async Task<BlogViewerResponseDto?> GetViewerAsync(
-     string slug)
+      string slug)
         {
             var data =
                 await
                 (
-                    from blog in _context.Blogs.AsNoTracking()
+                    from blog in _context.Blogs
+                        .AsNoTracking()
 
                     join user in _context.Users
                         on blog.CreatedByUserId equals user.ID
@@ -338,9 +351,9 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
                         on user.EmpId equals employee.ID
 
                     where blog.Slug == slug
-                        && blog.Status == BlogStatus.Published
-                        && !blog.IsDeleted
-                        && blog.IsActive
+                          && blog.Status == BlogStatus.Published
+                          && !blog.IsDeleted
+                          && blog.IsActive
 
                     select new BlogViewerResponseDto
                     {
@@ -350,12 +363,18 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
 
                         Slug = blog.Slug,
 
+                        //------------------------------------
+                        // Category
+                        //------------------------------------
+
                         Category = blog.CategoryNavigation == null
                             ? null
                             : new BlogCategoryInfoDto
                             {
                                 Id = blog.CategoryNavigation.Id,
+
                                 Name = blog.CategoryNavigation.Name,
+
                                 Slug = blog.CategoryNavigation.Slug
                             },
 
@@ -372,6 +391,10 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
                         OpenCount = blog.OpenCount,
 
                         PublishingDate = blog.PublishingDate,
+
+                        //------------------------------------
+                        // Author
+                        //------------------------------------
 
                         Author = new BlogAuthorDto
                         {
@@ -488,7 +511,7 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
         //    ).ToListAsync();
         //}
         public async Task<List<BlogCardDto>> GetBlogCardsAsync(
-    string? categorySlug = null)
+      string? categorySlug = null)
         {
             var query =
                 from blog in _context.Blogs.AsNoTracking()
@@ -510,16 +533,18 @@ public async Task<(List<BlogResponseDto> Blogs, int TotalCount)>
                 };
 
             //---------------------------------------
-            // Category Filter by Slug
+            // Category Filter
             //---------------------------------------
 
             if (!string.IsNullOrWhiteSpace(categorySlug))
             {
-                categorySlug = categorySlug.Trim().ToLower();
+                var normalizedCategorySlug =
+                    categorySlug.Trim().ToLower();
 
                 query = query.Where(x =>
                     x.Blog.CategoryNavigation != null &&
-                    x.Blog.CategoryNavigation.Slug.ToLower() == categorySlug);
+                    x.Blog.CategoryNavigation.Slug.ToLower()
+                        == normalizedCategorySlug);
             }
 
             //---------------------------------------
