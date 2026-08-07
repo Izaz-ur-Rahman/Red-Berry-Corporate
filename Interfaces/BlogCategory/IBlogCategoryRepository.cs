@@ -18,5 +18,6 @@ namespace RedBerryCorporate.Interfaces.BlogCategory
         Task<bool> NameExistsAsync(
             string name,
             int? ignoreId = null);
+        Task<BlogEntity?> GetInactiveByNameAsync(string name);
     }
 }

@@ -69,15 +69,27 @@ namespace RedBerryCorporate.Repository
         }
 
         public async Task<bool> NameExistsAsync(
-            string name,
-            int? ignoreId = null)
+       string name,
+       int? ignoreId = null)
         {
+            name = name.Trim();
+
             return await _context.BlogCategories
                 .AnyAsync(x =>
-                    x.Name.ToLower() == name.ToLower()
-                    &&
+                    x.Name.ToLower() == name.ToLower() &&
+                    x.IsActive &&
                     (!ignoreId.HasValue ||
                      x.Id != ignoreId.Value));
+        }
+
+        public async Task<BlogCategory?> GetInactiveByNameAsync(string name)
+        {
+            name = name.Trim();
+
+            return await _context.BlogCategories
+                .FirstOrDefaultAsync(x =>
+                    x.Name.ToLower() == name.ToLower() &&
+                    !x.IsActive);
         }
     }
 }

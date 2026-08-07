@@ -15,9 +15,13 @@ namespace RedBerryCorporate.Services
         }
 
         public async Task<BlogCategoryResponseDto> CreateAsync(
-            CreateBlogCategoryDto dto)
+        CreateBlogCategoryDto dto)
         {
             var name = dto.Name.Trim();
+
+            //---------------------------------------
+            // Check existing active category
+            //---------------------------------------
 
             if (await _repository.NameExistsAsync(name))
             {
@@ -25,12 +29,45 @@ namespace RedBerryCorporate.Services
                     "Blog category already exists.");
             }
 
+            //---------------------------------------
+            // Check previously deleted category
+            //---------------------------------------
+
+            var inactiveCategory =
+                await _repository.GetInactiveByNameAsync(name);
+
+            if (inactiveCategory != null)
+            {
+                inactiveCategory.IsActive = true;
+                inactiveCategory.UpdatedAt = DateTime.UtcNow;
+
+                inactiveCategory.Description =
+                    dto.Description?.Trim();
+
+                inactiveCategory.Slug =
+                    GenerateSlug(name);
+
+                var restoredCategory =
+                    await _repository.UpdateAsync(
+                        inactiveCategory);
+
+                return MapToDto(restoredCategory);
+            }
+
+            //---------------------------------------
+            // Create New Category
+            //---------------------------------------
+
             var category = new BlogCategory
             {
                 Name = name,
+
                 Slug = GenerateSlug(name),
+
                 Description = dto.Description?.Trim(),
+
                 IsActive = true,
+
                 CreatedAt = DateTime.UtcNow
             };
 
