@@ -14,7 +14,8 @@ namespace RedBerryCorporate.DTOs.Blog
         public string? Slug { get; set; }
 
         //public string? Category { get; set; }
-        public int? CategoryId { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
         public string? MetaDescription { get; set; }
         [MaxLength(300)]
         public string? ShortDescription { get; set; }

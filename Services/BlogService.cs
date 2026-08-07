@@ -33,46 +33,60 @@ namespace RedBerryCorporate.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<BlogResponseDto> AddAsync(
-        CreateBlogDto dto,
-        int currentUserId)
+
+public async Task<BlogResponseDto> AddAsync(
+    CreateBlogDto dto,
+    int currentUserId)
         {
             var slug =
                 string.IsNullOrWhiteSpace(dto.Slug)
-                ? SlugHelper.Generate(dto.Title)
-                : SlugHelper.Generate(dto.Slug);
+                    ? SlugHelper.Generate(dto.Title)
+                    : SlugHelper.Generate(dto.Slug);
 
             if (await _repository.SlugExistsAsync(slug))
                 throw new Exception("Slug already exists.");
+
+            //-----------------------------------
+            // Category Validation
+            //-----------------------------------
+
+            var category =
+                await _categoryRepository.GetByIdAsync(dto.CategoryId);
+
+            if (category == null || !category.IsActive)
+            {
+                throw new Exception(
+                    "Selected blog category is invalid.");
+            }
+
+            //-----------------------------------
+            // Upload Image
+            //-----------------------------------
 
             var image =
                 await ImageHelper.UploadBlogImageAsync(
                     dto.CoverImage,
                     _environment);
-            if (dto.CategoryId.HasValue)
-            {
-                var category =
-                    await _categoryRepository.GetByIdAsync(
-                        dto.CategoryId.Value);
 
-                if (category == null || !category.IsActive)
-                {
-                    throw new Exception(
-                        "Selected blog category is invalid.");
-                }
-            }
+            //-----------------------------------
+            // Create Blog
+            //-----------------------------------
+
             var blog = new Blog
             {
                 Title = dto.Title,
                 Slug = slug,
+
                 CategoryId = dto.CategoryId,
+
                 MetaDescription = dto.MetaDescription,
                 ShortDescription = dto.ShortDescription,
                 BlogDetails = dto.BlogDetails,
                 Tags = dto.Tags,
                 CoverImage = image,
 
-                ReadTime = CalculateReadTime(dto.BlogDetails),
+                ReadTime =
+                    CalculateReadTime(dto.BlogDetails),
 
                 CreatedAt = DateTime.UtcNow,
                 CreatedByUserId = currentUserId,
@@ -106,31 +120,43 @@ namespace RedBerryCorporate.Services
             {
                 blog.Status = BlogStatus.Draft;
             }
+
+            //-----------------------------------
+            // Save Blog
+            //-----------------------------------
+
             blog = await _repository.AddAsync(blog);
+
             blog = await _repository.GetByIdAsync(blog.Id);
 
             if (blog == null)
-                throw new Exception("Blog could not be retrieved after creation.");
+                throw new Exception(
+                    "Blog could not be retrieved after creation.");
+
+            //-----------------------------------
+            // Sitemap
+            //-----------------------------------
 
             if (blog.Status == BlogStatus.Published)
                 await _sitemap.GenerateAsync();
 
-            // notificatio api call here 
-    
+            //-----------------------------------
+            // Notification
+            //-----------------------------------
+
             await _notificationService.CreateAsync(
-    title: "New Blog Created",
-    message: $"Blog '{blog.Title}' was created successfully.",
-    type: NotificationType.Success,
-    action: NotificationAction.Created,
-    module: NotificationModule.Blog,
-    entityId: blog.Id,
-    currentUserId: currentUserId);
-
-
-        
+                title: "New Blog Created",
+                message: $"Blog '{blog.Title}' was created successfully.",
+                type: NotificationType.Success,
+                action: NotificationAction.Created,
+                module: NotificationModule.Blog,
+                entityId: blog.Id,
+                currentUserId: currentUserId);
 
             return MapToDto(blog);
         }
+
+
 
 
 public async Task<BlogResponseDto?> UpdateAsync(
@@ -142,34 +168,26 @@ public async Task<BlogResponseDto?> UpdateAsync(
             if (blog == null)
                 return null;
 
-            // ---------------------------------
+            //-----------------------------------
             // Category Validation
-            // ---------------------------------
+            //-----------------------------------
 
-            BlogCategory? category = null;
+            var category =
+                await _categoryRepository.GetByIdAsync(dto.CategoryId);
 
-            if (dto.CategoryId.HasValue)
+            if (category == null || !category.IsActive)
             {
-                category = await _categoryRepository.GetByIdAsync(
-                    dto.CategoryId.Value);
-
-                if (category == null || !category.IsActive)
-                {
-                    throw new Exception(
-                        "Selected blog category is invalid.");
-                }
+                throw new Exception(
+                    "Selected blog category is invalid.");
             }
 
-            // ---------------------------------
+            //-----------------------------------
             // Update Blog Information
-            // ---------------------------------
+            //-----------------------------------
 
             blog.Title = dto.Title;
 
-            // New category relationship
             blog.CategoryId = dto.CategoryId;
-
-     
 
             blog.MetaDescription = dto.MetaDescription;
             blog.ShortDescription = dto.ShortDescription;
@@ -179,9 +197,9 @@ public async Task<BlogResponseDto?> UpdateAsync(
             blog.ReadTime =
                 CalculateReadTime(dto.BlogDetails);
 
-            // ---------------------------------
+            //-----------------------------------
             // Slug
-            // ---------------------------------
+            //-----------------------------------
 
             blog.Slug =
                 string.IsNullOrWhiteSpace(dto.Slug)
@@ -195,9 +213,9 @@ public async Task<BlogResponseDto?> UpdateAsync(
                 throw new Exception("Slug already exists.");
             }
 
-            // ---------------------------------
+            //-----------------------------------
             // Cover Image
-            // ---------------------------------
+            //-----------------------------------
 
             if (dto.CoverImage != null)
             {
@@ -211,16 +229,16 @@ public async Task<BlogResponseDto?> UpdateAsync(
                         _environment);
             }
 
-            // ---------------------------------
+            //-----------------------------------
             // Audit Information
-            // ---------------------------------
+            //-----------------------------------
 
             blog.UpdatedAt = DateTime.UtcNow;
             blog.UpdatedByUserId = currentUserId;
 
-            // ---------------------------------
+            //-----------------------------------
             // Schedule Logic
-            // ---------------------------------
+            //-----------------------------------
 
             if (dto.PublishingDate.HasValue)
             {
@@ -240,25 +258,27 @@ public async Task<BlogResponseDto?> UpdateAsync(
                 }
             }
 
-            // ---------------------------------
+            //-----------------------------------
             // Save Blog
-            // ---------------------------------
+            //-----------------------------------
 
             blog = await _repository.UpdateAsync(blog);
+
             blog = await _repository.GetByIdAsync(blog.Id);
 
             if (blog == null)
                 return null;
-            // ---------------------------------
+
+            //-----------------------------------
             // Sitemap
-            // ---------------------------------
+            //-----------------------------------
 
             if (blog.Status == BlogStatus.Published)
                 await _sitemap.GenerateAsync();
 
-            // ---------------------------------
+            //-----------------------------------
             // Notification
-            // ---------------------------------
+            //-----------------------------------
 
             await _notificationService.CreateAsync(
                 title: "Blog Updated",
@@ -271,6 +291,7 @@ public async Task<BlogResponseDto?> UpdateAsync(
 
             return MapToDto(blog);
         }
+
 
 
 

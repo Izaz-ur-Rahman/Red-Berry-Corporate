@@ -60,6 +60,7 @@ namespace RedBerryCorporate.Repository
                 return false;
 
             category.IsActive = false;
+
             category.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
