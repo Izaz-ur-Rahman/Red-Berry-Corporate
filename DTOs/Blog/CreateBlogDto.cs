@@ -24,6 +24,7 @@ namespace RedBerryCorporate.DTOs.Blog
         public string? Tags { get; set; }
 
         public DateTime? PublishingDate { get; set; }
-        public List<BlogFaqInputDto> FAQs { get; set; } = new();
+        //public List<BlogFaqInputDto> FAQs { get; set; } = new();
+        public string? FAQs { get; set; }
     }
 }

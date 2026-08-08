@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using RedBerryCorporate.DTOs.Blog;
 using RedBerryCorporate.DTOs.Blog.Cards;
+using RedBerryCorporate.DTOs.Blog.FAQ;
 using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.DTOs.Common;
 using RedBerryCorporate.Enums;
@@ -11,7 +12,7 @@ using RedBerryCorporate.Interfaces.Notification;
 using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Models;
 using System.Reflection.Metadata;
-
+using System.Text.Json;
 namespace RedBerryCorporate.Services
 {
     public class BlogService : IBlogService
@@ -71,7 +72,10 @@ public async Task<BlogResponseDto> AddAsync(
             //-----------------------------------
             // Create Blog
             //-----------------------------------
-
+            var faqList = string.IsNullOrWhiteSpace(dto.FAQs)
+    ? new List<BlogFaqInputDto>()
+    : JsonSerializer.Deserialize<List<BlogFaqInputDto>>(dto.FAQs)
+        ?? new List<BlogFaqInputDto>();
             var blog = new Blog
             {
                 Title = dto.Title,
@@ -93,9 +97,9 @@ public async Task<BlogResponseDto> AddAsync(
 
                 IsActive = true,
                 IsDeleted = false,
-                 FAQs = dto.FAQs
-        .Select((faq, index) => new BlogFaq
-        {
+                FAQs = faqList
+    .Select((faq, index) => new BlogFaq
+    {
             Question = faq.Question,
             Answer = faq.Answer,
             SortOrder = faq.SortOrder > 0
@@ -135,7 +139,7 @@ public async Task<BlogResponseDto> AddAsync(
             //-----------------------------------
             // Save Blog
             //-----------------------------------
-
+          
             blog = await _repository.AddAsync(blog);
 
             blog = await _repository.GetByIdAsync(blog.Id);
