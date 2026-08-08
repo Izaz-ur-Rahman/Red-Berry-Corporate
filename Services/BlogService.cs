@@ -170,9 +170,9 @@ public async Task<BlogResponseDto> AddAsync(
 
 
 
-public async Task<BlogResponseDto?> UpdateAsync(
-    UpdateBlogDto dto,
-    int currentUserId)
+        public async Task<BlogResponseDto?> UpdateAsync(
+            UpdateBlogDto dto,
+            int currentUserId)
         {
             var blog = await _repository.GetByIdAsync(dto.Id);
 
@@ -207,6 +207,23 @@ public async Task<BlogResponseDto?> UpdateAsync(
 
             blog.ReadTime =
                 CalculateReadTime(dto.BlogDetails);
+
+            //-----------------------------------
+            // Prepare FAQs
+            //-----------------------------------
+
+            var faqs = dto.FAQs
+                .Select((faq, index) => new BlogFaq
+                {
+                    BlogId = blog.Id,
+                    Question = faq.Question,
+                    Answer = faq.Answer,
+                    SortOrder = faq.SortOrder > 0
+                        ? faq.SortOrder
+                        : index + 1,
+                    IsActive = faq.IsActive
+                })
+                .ToList();
 
             //-----------------------------------
             // Slug
@@ -275,6 +292,18 @@ public async Task<BlogResponseDto?> UpdateAsync(
 
             blog = await _repository.UpdateAsync(blog);
 
+            //-----------------------------------
+            // Replace FAQs
+            //-----------------------------------
+
+            await _repository.ReplaceFaqsAsync(
+                blog.Id,
+                faqs);
+
+            //-----------------------------------
+            // Get Updated Blog
+            //-----------------------------------
+
             blog = await _repository.GetByIdAsync(blog.Id);
 
             if (blog == null)
@@ -302,7 +331,6 @@ public async Task<BlogResponseDto?> UpdateAsync(
 
             return MapToDto(blog);
         }
-
 
 
 
