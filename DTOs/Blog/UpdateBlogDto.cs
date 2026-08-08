@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using RedBerryCorporate.DTOs.Blog.FAQ;
 using System.ComponentModel.DataAnnotations;
 
 namespace RedBerryCorporate.DTOs.Blog
@@ -26,5 +27,6 @@ namespace RedBerryCorporate.DTOs.Blog
         public string? Tags { get; set; }
 
         public DateTime? PublishingDate { get; set; }
+        public List<BlogFaqInputDto> FAQs { get; set; } = new();
     }
 }

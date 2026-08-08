@@ -132,11 +132,12 @@ namespace RedBerryCorporate.Repository
         public async Task<Blog?> GetByIdAsync(int id)
         {
             return await _context.Blogs
-                    .Include(x => x.CategoryNavigation)
-      .FirstOrDefaultAsync(x =>
-          x.Id == id &&
-          !x.IsDeleted &&
-          x.IsActive);
+                .Include(x => x.CategoryNavigation)
+                .Include(x => x.FAQs)
+                .FirstOrDefaultAsync(x =>
+                    x.Id == id &&
+                    !x.IsDeleted &&
+                    x.IsActive);
         }
 
         public async Task<Blog?> GetBySlugAsync(string slug)
@@ -593,6 +594,27 @@ namespace RedBerryCorporate.Repository
         {
             return await _context.Blogs
                 .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task ReplaceFaqsAsync(
+    int blogId,
+    List<BlogFaq> faqs)
+        {
+            var existingFaqs = await _context.BlogFaqs
+                .Where(x => x.BlogId == blogId)
+                .ToListAsync();
+
+            if (existingFaqs.Any())
+            {
+                _context.BlogFaqs.RemoveRange(existingFaqs);
+            }
+
+            if (faqs.Any())
+            {
+                await _context.BlogFaqs.AddRangeAsync(faqs);
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }
