@@ -2,6 +2,7 @@
 using RedBerryCorporate.Data;
 using RedBerryCorporate.DTOs.Blog;
 using RedBerryCorporate.DTOs.Blog.Cards;
+using RedBerryCorporate.DTOs.Blog.FAQ;
 using RedBerryCorporate.DTOs.Blog.Viewer;
 using RedBerryCorporate.Enums;
 using RedBerryCorporate.Interfaces.Blog;
@@ -423,7 +424,23 @@ namespace RedBerryCorporate.Repository
                                 !string.IsNullOrWhiteSpace(employee.Photo)
                                     ? employee.Photo
                                     : employee.ProfilePicName
-                        }
+                        },
+
+                        //--------------------------------
+                        // FAQs  will be populated separately
+                        //--------------------------------
+                        FAQs = blog.FAQs
+    .Where(f => f.IsActive)
+    .OrderBy(f => f.SortOrder)
+    .Select(f => new BlogFaqDto
+    {
+        Id = f.Id,
+        Question = f.Question,
+        Answer = f.Answer,
+        SortOrder = f.SortOrder,
+        IsActive = f.IsActive
+    })
+    .ToList(),
                     }
                 )
                 .FirstOrDefaultAsync();
