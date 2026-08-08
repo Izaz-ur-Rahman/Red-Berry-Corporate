@@ -11,7 +11,7 @@ namespace RedBerryCorporate.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class BlogCategoryController : BaseApiController
     {
         private readonly IBlogCategoryService _blogCategoryService;

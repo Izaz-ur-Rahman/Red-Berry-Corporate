@@ -15,6 +15,7 @@ namespace RedBerryCorporate.Data
         public DbSet<BlueprintSubmission> BlueprintSubmissions { get; set; }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<BlogCategory> BlogCategories { get; set; }
+        public DbSet<BlogFaq> BlogFaqs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<TblEmployee> TblEmployees { get; set; }
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
@@ -30,6 +31,12 @@ namespace RedBerryCorporate.Data
                 .WithMany()
                 .HasForeignKey(x => x.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<BlogFaq>()
+    .HasOne(x => x.Blog)
+    .WithMany(x => x.FAQs)
+    .HasForeignKey(x => x.BlogId)
+    .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -19,6 +19,8 @@ namespace RedBerryCorporate.Models
         public int CategoryId { get; set; }
 
         public BlogCategory CategoryNavigation { get; set; } = null!;
+        public ICollection<BlogFaq> FAQs { get; set; }
+    = new List<BlogFaq>();
 
         [MaxLength(500)]
         public string? MetaDescription { get; set; }
