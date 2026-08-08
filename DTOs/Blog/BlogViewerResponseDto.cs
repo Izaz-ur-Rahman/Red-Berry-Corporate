@@ -1,4 +1,6 @@
-﻿namespace RedBerryCorporate.DTOs.Blog.Viewer
+﻿using RedBerryCorporate.DTOs.Blog.FAQ;
+
+namespace RedBerryCorporate.DTOs.Blog.Viewer
 {
     public class BlogViewerResponseDto
     {
@@ -26,7 +28,7 @@
         public DateTime? PublishingDate { get; set; }
 
         public BlogAuthorDto Author { get; set; }
-
+        public List<BlogFaqDto> FAQs { get; set; } = new();
         public List<RelatedBlogDto> RelatedBlogs { get; set; }
             = new();
     }
