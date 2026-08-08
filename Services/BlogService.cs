@@ -92,7 +92,18 @@ public async Task<BlogResponseDto> AddAsync(
                 CreatedByUserId = currentUserId,
 
                 IsActive = true,
-                IsDeleted = false
+                IsDeleted = false,
+                 FAQs = dto.FAQs
+        .Select((faq, index) => new BlogFaq
+        {
+            Question = faq.Question,
+            Answer = faq.Answer,
+            SortOrder = faq.SortOrder > 0
+                ? faq.SortOrder
+                : index + 1,
+            IsActive = faq.IsActive
+        })
+        .ToList()
             };
 
             //-----------------------------------
