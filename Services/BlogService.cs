@@ -73,9 +73,15 @@ public async Task<BlogResponseDto> AddAsync(
             // Create Blog
             //-----------------------------------
             var faqList = string.IsNullOrWhiteSpace(dto.FAQs)
-    ? new List<BlogFaqInputDto>()
-    : JsonSerializer.Deserialize<List<BlogFaqInputDto>>(dto.FAQs)
-        ?? new List<BlogFaqInputDto>();
+                ? new List<BlogFaqInputDto>()
+                : JsonSerializer.Deserialize<List<BlogFaqInputDto>>(
+                    dto.FAQs,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    })
+                    ?? new List<BlogFaqInputDto>();
+
             var blog = new Blog
             {
                 Title = dto.Title,
@@ -98,16 +104,16 @@ public async Task<BlogResponseDto> AddAsync(
                 IsActive = true,
                 IsDeleted = false,
                 FAQs = faqList
-    .Select((faq, index) => new BlogFaq
-    {
-            Question = faq.Question,
-            Answer = faq.Answer,
-            SortOrder = faq.SortOrder > 0
-                ? faq.SortOrder
-                : index + 1,
-            IsActive = faq.IsActive
-        })
-        .ToList()
+                              .Select((faq, index) => new BlogFaq
+                    {
+                               Question = faq.Question,
+                               Answer = faq.Answer,
+                               SortOrder = faq.SortOrder > 0
+                              ? faq.SortOrder
+                            : index + 1,
+                             IsActive = faq.IsActive
+                     })
+                        .ToList()
             };
 
             //-----------------------------------
@@ -216,7 +222,12 @@ public async Task<BlogResponseDto> AddAsync(
             // Prepare FAQs
             //-----------------------------------
 
-            var faqs = dto.FAQs
+            var faqList = string.IsNullOrWhiteSpace(dto.FAQs)
+       ? new List<BlogFaqInputDto>()
+       : JsonSerializer.Deserialize<List<BlogFaqInputDto>>(dto.FAQs)
+           ?? new List<BlogFaqInputDto>();
+
+            var faqs = faqList
                 .Select((faq, index) => new BlogFaq
                 {
                     BlogId = blog.Id,
