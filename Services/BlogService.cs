@@ -625,7 +625,19 @@ public async Task<BlogResponseDto> AddAsync(
 
                 ReadTime = blog.ReadTime,
 
-                OpenCount = blog.OpenCount
+                OpenCount = blog.OpenCount,
+                FAQs = blog.FAQs
+    .Where(f => f.IsActive)
+    .OrderBy(f => f.SortOrder)
+    .Select(f => new BlogFaqDto
+    {
+        Id = f.Id,
+        Question = f.Question,
+        Answer = f.Answer,
+        SortOrder = f.SortOrder,
+        IsActive = f.IsActive
+    })
+    .ToList()
             };
         }
         public async Task<bool> ScheduleAsync(
