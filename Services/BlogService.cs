@@ -181,13 +181,18 @@ public async Task<BlogResponseDto> AddAsync(
 
 
         public async Task<BlogResponseDto?> UpdateAsync(
-            UpdateBlogDto dto,
-            int currentUserId)
+       UpdateBlogDto dto,
+       int currentUserId)
         {
+            //-----------------------------------
+            // Get Blog
+            //-----------------------------------
+
             var blog = await _repository.GetByIdAsync(dto.Id);
 
             if (blog == null)
                 return null;
+
 
             //-----------------------------------
             // Category Validation
@@ -202,6 +207,7 @@ public async Task<BlogResponseDto> AddAsync(
                     "Selected blog category is invalid.");
             }
 
+
             //-----------------------------------
             // Update Blog Information
             //-----------------------------------
@@ -211,34 +217,55 @@ public async Task<BlogResponseDto> AddAsync(
             blog.CategoryId = dto.CategoryId;
 
             blog.MetaDescription = dto.MetaDescription;
+
             blog.ShortDescription = dto.ShortDescription;
+
             blog.BlogDetails = dto.BlogDetails;
+
             blog.Tags = dto.Tags;
 
             blog.ReadTime =
                 CalculateReadTime(dto.BlogDetails);
 
+
             //-----------------------------------
             // Prepare FAQs
             //-----------------------------------
 
-            var faqList = string.IsNullOrWhiteSpace(dto.FAQs)
-       ? new List<BlogFaqInputDto>()
-       : JsonSerializer.Deserialize<List<BlogFaqInputDto>>(dto.FAQs)
-           ?? new List<BlogFaqInputDto>();
+            var faqList =
+                string.IsNullOrWhiteSpace(dto.FAQs)
+                    ? new List<BlogFaqInputDto>()
+                    : JsonSerializer.Deserialize<List<BlogFaqInputDto>>(
+                        dto.FAQs,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        })
+                      ?? new List<BlogFaqInputDto>();
+
+
+            //-----------------------------------
+            // Convert FAQ DTOs to BlogFaq Entities
+            //-----------------------------------
 
             var faqs = faqList
                 .Select((faq, index) => new BlogFaq
                 {
                     BlogId = blog.Id,
+
                     Question = faq.Question,
+
                     Answer = faq.Answer,
-                    SortOrder = faq.SortOrder > 0
-                        ? faq.SortOrder
-                        : index + 1,
+
+                    SortOrder =
+                        faq.SortOrder > 0
+                            ? faq.SortOrder
+                            : index + 1,
+
                     IsActive = faq.IsActive
                 })
                 .ToList();
+
 
             //-----------------------------------
             // Slug
@@ -249,12 +276,19 @@ public async Task<BlogResponseDto> AddAsync(
                     ? SlugHelper.Generate(dto.Title)
                     : SlugHelper.Generate(dto.Slug);
 
+
+            //-----------------------------------
+            // Check Duplicate Slug
+            //-----------------------------------
+
             if (await _repository.SlugExistsAsync(
                 blog.Slug,
                 blog.Id))
             {
-                throw new Exception("Slug already exists.");
+                throw new Exception(
+                    "Slug already exists.");
             }
+
 
             //-----------------------------------
             // Cover Image
@@ -272,15 +306,18 @@ public async Task<BlogResponseDto> AddAsync(
                         _environment);
             }
 
+
             //-----------------------------------
             // Audit Information
             //-----------------------------------
 
             blog.UpdatedAt = DateTime.UtcNow;
+
             blog.UpdatedByUserId = currentUserId;
 
+
             //-----------------------------------
-            // Schedule Logic
+            // Schedule / Publishing Logic
             //-----------------------------------
 
             if (dto.PublishingDate.HasValue)
@@ -290,46 +327,59 @@ public async Task<BlogResponseDto> AddAsync(
                     blog.Status = BlogStatus.Published;
 
                     blog.PublishingDate = DateTime.UtcNow;
+
                     blog.PublishedAt = DateTime.UtcNow;
+
                     blog.PublishedByUserId = currentUserId;
                 }
                 else
                 {
                     blog.Status = BlogStatus.Scheduled;
 
-                    blog.PublishingDate = dto.PublishingDate;
+                    blog.PublishingDate =
+                        dto.PublishingDate;
                 }
             }
+
 
             //-----------------------------------
             // Save Blog
             //-----------------------------------
 
-            blog = await _repository.UpdateAsync(blog);
+            blog =
+                await _repository.UpdateAsync(blog);
+
 
             //-----------------------------------
-            // Replace FAQs
+            // Replace Existing FAQs
             //-----------------------------------
 
             await _repository.ReplaceFaqsAsync(
                 blog.Id,
                 faqs);
 
+
             //-----------------------------------
             // Get Updated Blog
             //-----------------------------------
 
-            blog = await _repository.GetByIdAsync(blog.Id);
+            blog =
+                await _repository.GetByIdAsync(
+                    blog.Id);
 
             if (blog == null)
                 return null;
+
 
             //-----------------------------------
             // Sitemap
             //-----------------------------------
 
             if (blog.Status == BlogStatus.Published)
+            {
                 await _sitemap.GenerateAsync();
+            }
+
 
             //-----------------------------------
             // Notification
@@ -337,12 +387,24 @@ public async Task<BlogResponseDto> AddAsync(
 
             await _notificationService.CreateAsync(
                 title: "Blog Updated",
-                message: $"Blog '{blog.Title}' was updated successfully.",
+
+                message:
+                    $"Blog '{blog.Title}' was updated successfully.",
+
                 type: NotificationType.Info,
+
                 action: NotificationAction.Updated,
+
                 module: NotificationModule.Blog,
+
                 entityId: blog.Id,
+
                 currentUserId: currentUserId);
+
+
+            //-----------------------------------
+            // Return Response
+            //-----------------------------------
 
             return MapToDto(blog);
         }
