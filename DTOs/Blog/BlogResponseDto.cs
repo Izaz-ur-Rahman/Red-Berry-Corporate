@@ -1,4 +1,5 @@
 ﻿using RedBerryCorporate.DTOs.Blog.Cards;
+using RedBerryCorporate.DTOs.Blog.FAQ;
 
 namespace RedBerryCorporate.DTOs.Blog
 {
@@ -32,6 +33,8 @@ namespace RedBerryCorporate.DTOs.Blog
         public string Status { get; set; }
         // NEW
         public BlogCardAuthorDto? Author { get; set; }
+        public List<BlogFaqDto> FAQs { get; set; } = new();
+
 
     }
 }
