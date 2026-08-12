@@ -156,8 +156,8 @@ namespace RedBerryCorporate.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserDto dto)
         {
-            //var currentUserId = GetCurrentUserIdOrThrow();
-            var currentUserId = 1;
+            var currentUserId = GetCurrentUserIdOrThrow();
+            //var currentUserId = 1;
 
             await _userService.CreateAsync(dto, currentUserId);
 
