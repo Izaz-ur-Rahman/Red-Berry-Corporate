@@ -53,9 +53,14 @@ namespace RedBerryCorporate.Services
                         submission.StrongestLayer,
                         submission.ExposedLayer
                     });
-
+            // Supervisor 1 
             await SendEmailAsync(
                 _settings.SupervisorEmail,
+                template.Subject,
+                template.Body);
+            // Supervisor 2
+            await SendEmailAsync(
+                _settings.SecondSupervisorEmail,
                 template.Subject,
                 template.Body);
         }
