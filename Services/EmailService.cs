@@ -103,15 +103,13 @@ namespace RedBerryCorporate.Services
         //        "Your Blueprint Has Been Received",
         //        body);
         //}
-
         private async Task SendEmailAsync(
-            string to,
-            string subject,
-            string body)
+    string to,
+    string subject,
+    string body)
         {
             try
             {
-               
                 using var client = new SmtpClient(
                     _settings.SmtpServer,
                     _settings.Port);
@@ -124,6 +122,7 @@ namespace RedBerryCorporate.Services
                 client.UseDefaultCredentials = false;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.Timeout = 30000;
+
                 var mail = new MailMessage
                 {
                     From = new MailAddress(
@@ -134,187 +133,231 @@ namespace RedBerryCorporate.Services
                     Body = body,
                     IsBodyHtml = true
                 };
-           
+
                 mail.To.Add(to);
-               
+
                 await client.SendMailAsync(mail);
-                //Console.WriteLine("STEP 7 AFTER SEND");
-                //Console.WriteLine("EMAIL SENT");
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex);
+                Console.WriteLine($"Email failed to: {to}");
+                Console.WriteLine(ex);
 
-                //throw;
-                //throw new Exception($"SMTP Error: {ex.Message}", ex);
+                throw;
             }
         }
+        //----------------------------- this  below is somehow worked but i replaced it with the above code using the template service -----------------------------
+        //private async Task SendEmailAsync(
+        //    string to,
+        //    string subject,
+        //    string body)
+        //{
+        //    try
+        //    {
 
-//        private string BuildSupervisorBody(BlueprintSubmission s)
-//        {
-//            return $@"
-//<!DOCTYPE html>
-//<html>
-//<head>
-//    <meta charset='UTF-8'>
-//</head>
+        //        using var client = new SmtpClient(
+        //            _settings.SmtpServer,
+        //            _settings.Port);
 
-//<body style='margin:0;padding:0;background:#f4f6f9;font-family:Arial,Helvetica,sans-serif;'>
+        //        client.Credentials = new NetworkCredential(
+        //            _settings.SenderEmail,
+        //            _settings.Password);
 
-//<table width='100%' cellpadding='0' cellspacing='0' style='background:#f4f6f9;padding:30px 0;'>
+        //        client.EnableSsl = _settings.EnableSSL;
+        //        client.UseDefaultCredentials = false;
+        //        client.DeliveryMethod = SmtpDeliveryMethod.Network;
+        //        client.Timeout = 30000;
+        //        var mail = new MailMessage
+        //        {
+        //            From = new MailAddress(
+        //                _settings.SenderEmail,
+        //                _settings.SenderName),
 
-//<tr>
-//<td align='center'>
+        //            Subject = subject,
+        //            Body = body,
+        //            IsBodyHtml = true
+        //        };
 
-//<table width='700' cellpadding='0' cellspacing='0'
-//style='background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e5e5e5;'>
+        //        mail.To.Add(to);
 
-//<!-- Header -->
-//<tr>
-//<td style='background:#b22222;color:#ffffff;padding:20px;text-align:center;'>
+        //        await client.SendMailAsync(mail);
+        //        //Console.WriteLine("STEP 7 AFTER SEND");
+        //        //Console.WriteLine("EMAIL SENT");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        //Console.WriteLine(ex);
 
-//<h2 style='margin:0;'>New Blueprint Submission</h2>
+        //        //throw;
+        //        //throw new Exception($"SMTP Error: {ex.Message}", ex);
+        //    }
+        //}
 
-//<p style='margin:8px 0 0;font-size:14px;'>
-//A new Ambition Infrastructure Blueprint has been submitted.
-//</p>
+        //        private string BuildSupervisorBody(BlueprintSubmission s)
+        //        {
+        //            return $@"
+        //<!DOCTYPE html>
+        //<html>
+        //<head>
+        //    <meta charset='UTF-8'>
+        //</head>
 
-//</td>
-//</tr>
+        //<body style='margin:0;padding:0;background:#f4f6f9;font-family:Arial,Helvetica,sans-serif;'>
 
-//<!-- Body -->
-//<tr>
-//<td style='padding:30px;'>
+        //<table width='100%' cellpadding='0' cellspacing='0' style='background:#f4f6f9;padding:30px 0;'>
 
-//<p style='margin-top:0;font-size:15px;color:#444;'>
-//Dear Team,
-//</p>
+        //<tr>
+        //<td align='center'>
 
-//<p style='font-size:15px;color:#444;line-height:24px;'>
-//A new Blueprint Assessment has been successfully submitted.
-//Below are the submission details.
-//</p>
+        //<table width='700' cellpadding='0' cellspacing='0'
+        //style='background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e5e5e5;'>
 
-//<table width='100%' cellpadding='10' cellspacing='0'
-//style='border-collapse:collapse;border:1px solid #dddddd;font-size:14px;'>
+        //<!-- Header -->
+        //<tr>
+        //<td style='background:#b22222;color:#ffffff;padding:20px;text-align:center;'>
 
-//<tr style='background:#f8f9fa;'>
-//<td width='35%' style='border:1px solid #dddddd;'><strong>Name</strong></td>
-//<td style='border:1px solid #dddddd;'>{s.Name}</td>
-//</tr>
+        //<h2 style='margin:0;'>New Blueprint Submission</h2>
 
-//<tr>
-//<td style='border:1px solid #dddddd;'><strong>Company</strong></td>
-//<td style='border:1px solid #dddddd;'>{s.Company}</td>
-//</tr>
+        //<p style='margin:8px 0 0;font-size:14px;'>
+        //A new Ambition Infrastructure Blueprint has been submitted.
+        //</p>
 
-//<tr style='background:#f8f9fa;'>
-//<td style='border:1px solid #dddddd;'><strong>Email</strong></td>
-//<td style='border:1px solid #dddddd;'>{s.Email}</td>
-//</tr>
+        //</td>
+        //</tr>
 
-//<tr>
-//<td style='border:1px solid #dddddd;'><strong>WhatsApp</strong></td>
-//<td style='border:1px solid #dddddd;'>{s.Whatsapp}</td>
-//</tr>
+        //<!-- Body -->
+        //<tr>
+        //<td style='padding:30px;'>
 
-//<tr style='background:#f8f9fa;'>
-//<td style='border:1px solid #dddddd;'><strong>Location</strong></td>
-//<td style='border:1px solid #dddddd;'>{s.Location}</td>
-//</tr>
+        //<p style='margin-top:0;font-size:15px;color:#444;'>
+        //Dear Team,
+        //</p>
 
-//<tr>
-//<td style='border:1px solid #dddddd;'><strong>Total Score</strong></td>
-//<td style='border:1px solid #dddddd;'><strong>{s.TotalScore}</strong></td>
-//</tr>
+        //<p style='font-size:15px;color:#444;line-height:24px;'>
+        //A new Blueprint Assessment has been successfully submitted.
+        //Below are the submission details.
+        //</p>
 
-//<tr style='background:#f8f9fa;'>
-//<td style='border:1px solid #dddddd;'><strong>Overall Status</strong></td>
-//<td style='border:1px solid #dddddd;'>
-//<span style='color:#28a745;font-weight:bold;'>
-//{s.OverallStatus}
-//</span>
-//</td>
-//</tr>
+        //<table width='100%' cellpadding='10' cellspacing='0'
+        //style='border-collapse:collapse;border:1px solid #dddddd;font-size:14px;'>
 
-//<tr>
-//<td style='border:1px solid #dddddd;'><strong>Recommended Pathway</strong></td>
-//<td style='border:1px solid #dddddd;'>
-//{s.RecommendedPathway}
-//</td>
-//</tr>
+        //<tr style='background:#f8f9fa;'>
+        //<td width='35%' style='border:1px solid #dddddd;'><strong>Name</strong></td>
+        //<td style='border:1px solid #dddddd;'>{s.Name}</td>
+        //</tr>
 
-//<tr style='background:#f8f9fa;'>
-//<td style='border:1px solid #dddddd;'><strong>Strongest Layer</strong></td>
-//<td style='border:1px solid #dddddd;'>
-//{s.StrongestLayer}
-//</td>
-//</tr>
+        //<tr>
+        //<td style='border:1px solid #dddddd;'><strong>Company</strong></td>
+        //<td style='border:1px solid #dddddd;'>{s.Company}</td>
+        //</tr>
 
-//<tr>
-//<td style='border:1px solid #dddddd;'><strong>Exposed Layer</strong></td>
-//<td style='border:1px solid #dddddd;'>
-//{s.ExposedLayer}
-//</td>
-//</tr>
+        //<tr style='background:#f8f9fa;'>
+        //<td style='border:1px solid #dddddd;'><strong>Email</strong></td>
+        //<td style='border:1px solid #dddddd;'>{s.Email}</td>
+        //</tr>
 
-//</table>
+        //<tr>
+        //<td style='border:1px solid #dddddd;'><strong>WhatsApp</strong></td>
+        //<td style='border:1px solid #dddddd;'>{s.Whatsapp}</td>
+        //</tr>
 
-//<p style='margin-top:25px;font-size:15px;color:#444;'>
-//Please log in to the CMS dashboard to review the complete Blueprint assessment and follow up with the client.
-//</p>
+        //<tr style='background:#f8f9fa;'>
+        //<td style='border:1px solid #dddddd;'><strong>Location</strong></td>
+        //<td style='border:1px solid #dddddd;'>{s.Location}</td>
+        //</tr>
 
-//</td>
-//</tr>
+        //<tr>
+        //<td style='border:1px solid #dddddd;'><strong>Total Score</strong></td>
+        //<td style='border:1px solid #dddddd;'><strong>{s.TotalScore}</strong></td>
+        //</tr>
 
-//<!-- Footer -->
-//<tr>
-//<td style='background:#f8f9fa;padding:18px;text-align:center;
-//font-size:13px;color:#777;border-top:1px solid #e5e5e5;'>
+        //<tr style='background:#f8f9fa;'>
+        //<td style='border:1px solid #dddddd;'><strong>Overall Status</strong></td>
+        //<td style='border:1px solid #dddddd;'>
+        //<span style='color:#28a745;font-weight:bold;'>
+        //{s.OverallStatus}
+        //</span>
+        //</td>
+        //</tr>
 
-//This is an automated notification generated by
-//<strong>RedBerry Corporate CMS</strong>.
+        //<tr>
+        //<td style='border:1px solid #dddddd;'><strong>Recommended Pathway</strong></td>
+        //<td style='border:1px solid #dddddd;'>
+        //{s.RecommendedPathway}
+        //</td>
+        //</tr>
 
-//</td>
-//</tr>
+        //<tr style='background:#f8f9fa;'>
+        //<td style='border:1px solid #dddddd;'><strong>Strongest Layer</strong></td>
+        //<td style='border:1px solid #dddddd;'>
+        //{s.StrongestLayer}
+        //</td>
+        //</tr>
 
-//</table>
+        //<tr>
+        //<td style='border:1px solid #dddddd;'><strong>Exposed Layer</strong></td>
+        //<td style='border:1px solid #dddddd;'>
+        //{s.ExposedLayer}
+        //</td>
+        //</tr>
 
-//</td>
-//</tr>
+        //</table>
 
-//</table>
+        //<p style='margin-top:25px;font-size:15px;color:#444;'>
+        //Please log in to the CMS dashboard to review the complete Blueprint assessment and follow up with the client.
+        //</p>
 
-//</body>
-//</html>";
-//        }
+        //</td>
+        //</tr>
 
-//        private string BuildClientBody(BlueprintSubmission s)
-//        {
-//            return $@"
-//<h2>Hello {s.Name},</h2>
+        //<!-- Footer -->
+        //<tr>
+        //<td style='background:#f8f9fa;padding:18px;text-align:center;
+        //font-size:13px;color:#777;border-top:1px solid #e5e5e5;'>
 
-//<p>
-//Thank you for completing the
-//<b>Ambition Infrastructure Blueprint.</b>
-//</p>
+        //This is an automated notification generated by
+        //<strong>RedBerry Corporate CMS</strong>.
 
-//<p>
-//Your submission has been received successfully.
-//</p>
+        //</td>
+        //</tr>
 
-//<p>
-//Our team will carefully review your Blueprint and contact you shortly.
-//</p>
+        //</table>
 
-//<br/>
+        //</td>
+        //</tr>
 
-//Regards,
+        //</table>
 
-//<br/>
+        //</body>
+        //</html>";
+        //        }
 
-//<b>RedBerry Corporate</b>
-//";
-//        }
+        //        private string BuildClientBody(BlueprintSubmission s)
+        //        {
+        //            return $@"
+        //<h2>Hello {s.Name},</h2>
+
+        //<p>
+        //Thank you for completing the
+        //<b>Ambition Infrastructure Blueprint.</b>
+        //</p>
+
+        //<p>
+        //Your submission has been received successfully.
+        //</p>
+
+        //<p>
+        //Our team will carefully review your Blueprint and contact you shortly.
+        //</p>
+
+        //<br/>
+
+        //Regards,
+
+        //<br/>
+
+        //<b>RedBerry Corporate</b>
+        //";
+        //        }
     }
 }
