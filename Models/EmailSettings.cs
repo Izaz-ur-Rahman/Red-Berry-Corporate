@@ -15,5 +15,6 @@
         public bool EnableSSL { get; set; }
 
         public string SupervisorEmail { get; set; } = string.Empty;
+        public string SecondSupervisorEmail { get; set; } = string.Empty;
     }
 }
