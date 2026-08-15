@@ -78,7 +78,7 @@ namespace RedBerryCorporate.Services
         public async Task<BlueprintResponseDto> CreateAsync(BlueprintCreateDto dto)
         {
             bool verified =
-    await _captchaService.VerifyTokenAsync(dto.CaptchaToken);
+     await _captchaService.VerifyTokenAsync(dto.CaptchaToken);
 
             if (!verified)
             {

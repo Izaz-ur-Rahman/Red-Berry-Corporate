@@ -1,4 +1,6 @@
-﻿namespace RedBerryCorporate.Models
+﻿using System.Text.Json.Serialization;
+
+namespace RedBerryCorporate.Models
 {
     public class RecaptchaResponse
     {
@@ -12,6 +14,8 @@
 
         public string hostname { get; set; }
 
-        public string[] error_codes { get; set; }
+        //public string[] error_codes { get; set; }
+        [JsonPropertyName("error-codes")]
+        public string[]? error_codes { get; set; }
     }
 }
