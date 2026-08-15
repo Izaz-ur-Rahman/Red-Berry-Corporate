@@ -1,0 +1,98 @@
+2026-08-13 12:58:24 [Warning] No store type was specified for the decimal property '"Salary"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-08-13 12:58:24 [Warning] No store type was specified for the decimal property '"Target"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-08-13 14:43:47 [Warning] No store type was specified for the decimal property '"Salary"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-08-13 14:43:47 [Warning] No store type was specified for the decimal property '"Target"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-08-13 14:56:25 [Information] Sending captcha verification request to Google.
+2026-08-13 14:56:26 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"timeout-or-duplicate\"
+  ]
+}"
+2026-08-13 14:56:26 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 14:56:26 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:12:15 [Information] Sending captcha verification request to Google.
+2026-08-13 15:12:15 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:12:15 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:12:15 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:20:48 [Information] Sending captcha verification request to Google.
+2026-08-13 15:20:48 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:20:48 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:20:48 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:21:33 [Information] Sending captcha verification request to Google.
+2026-08-13 15:21:33 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:21:33 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:21:33 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:23:00 [Information] Sending captcha verification request to Google.
+2026-08-13 15:23:01 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:23:01 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:23:01 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:35:10 [Information] Sending captcha verification request to Google.
+2026-08-13 15:35:11 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:35:11 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:35:11 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:35:47 [Information] Sending captcha verification request to Google.
+2026-08-13 15:35:48 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:35:48 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:35:48 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:36:23 [Information] Sending captcha verification request to Google.
+2026-08-13 15:36:23 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:36:23 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:36:23 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:36:54 [Information] Sending captcha verification request to Google.
+2026-08-13 15:36:55 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:36:55 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:36:55 [Warning] Captcha failed. Errors: "None"
+2026-08-13 15:42:55 [Warning] No store type was specified for the decimal property '"Salary"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-08-13 15:42:55 [Warning] No store type was specified for the decimal property '"Target"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-08-13 15:43:31 [Information] Sending captcha verification request to Google.
+2026-08-13 15:43:31 [Information] Google Raw Response: "{
+  \"success\": false,
+  \"error-codes\": [
+    \"browser-error\"
+  ]
+}"
+2026-08-13 15:43:31 [Information] Google Response => Success:False, Score:0, Action:null, Host:null
+2026-08-13 15:43:31 [Warning] Captcha failed. Errors: "browser-error"
+2026-08-13 16:26:55 [Warning] No store type was specified for the decimal property '"Salary"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2026-08-13 16:26:55 [Warning] No store type was specified for the decimal property '"Target"' on entity type '"TblEmployee"'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
