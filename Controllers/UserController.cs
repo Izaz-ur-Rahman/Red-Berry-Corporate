@@ -9,7 +9,7 @@ namespace RedBerryCorporate.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UserController : BaseApiController
+    public class UserController : BaseApiController       
     {
         private readonly IUserService _userService;
 
