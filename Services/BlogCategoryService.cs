@@ -1,5 +1,6 @@
 ﻿using RedBerryCorporate.DTOs.BlogCategory;
 using RedBerryCorporate.Interfaces.BlogCategory;
+using RedBerryCorporate.Interfaces.Sitemap;
 using RedBerryCorporate.Models;
 
 namespace RedBerryCorporate.Services
@@ -7,11 +8,12 @@ namespace RedBerryCorporate.Services
     public class BlogCategoryService : IBlogCategoryService
     {
         private readonly IBlogCategoryRepository _repository;
-
+        private readonly ISitemapGenerator _sitemap;
         public BlogCategoryService(
-            IBlogCategoryRepository repository)
+            IBlogCategoryRepository repository, ISitemapGenerator sitemap)
         {
             _repository = repository;
+            _sitemap = sitemap;
         }
 
         public async Task<BlogCategoryResponseDto> CreateAsync(
@@ -50,7 +52,7 @@ namespace RedBerryCorporate.Services
                 var restoredCategory =
                     await _repository.UpdateAsync(
                         inactiveCategory);
-
+                await _sitemap.GenerateAsync();
                 return MapToDto(restoredCategory);
             }
 
@@ -73,6 +75,7 @@ namespace RedBerryCorporate.Services
 
             category =
                 await _repository.CreateAsync(category);
+            await _sitemap.GenerateAsync();
 
             return MapToDto(category);
         }
@@ -128,7 +131,7 @@ namespace RedBerryCorporate.Services
 
             category =
                 await _repository.UpdateAsync(category);
-
+            await _sitemap.GenerateAsync();
             return MapToDto(category);
         }
 
