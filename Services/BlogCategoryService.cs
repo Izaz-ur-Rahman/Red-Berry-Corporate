@@ -137,7 +137,15 @@ namespace RedBerryCorporate.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
-            return await _repository.DeleteAsync(id);
+            var result =
+        await _repository.DeleteAsync(id);
+
+            if (result)
+            {
+                await _sitemap.GenerateAsync();
+            }
+
+            return result;
         }
 
         private static BlogCategoryResponseDto MapToDto(
