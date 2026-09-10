@@ -303,6 +303,9 @@ builder.Services.Configure<EmailSettings>(
 builder.Services.Configure<RecaptchaSettings>(
     builder.Configuration.GetSection("RecaptchaSettings"));
 
+builder.Services.Configure<WebsiteDeploySettings>(
+    builder.Configuration.GetSection("WebsiteDeploy"));
+
 #endregion
 
 #region Dependency Injection
@@ -321,6 +324,7 @@ builder.Services.AddScoped<IBlogService, BlogService>();
 
 // Sitemap
 builder.Services.AddScoped<ISitemapGenerator, SitemapGenerator>();
+builder.Services.AddScoped<ISitemapPublisher, FtpSitemapPublisher>();
 
 // Email
 builder.Services.AddScoped<IEmailService, EmailService>();

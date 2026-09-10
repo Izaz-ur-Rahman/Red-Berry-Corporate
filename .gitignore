@@ -6,3 +6,7 @@ appsettings.Development.json
 .vs/
 bin/
 obj/
+# Local / separate frontend projects
+/Ambition Architects-final-website/
+/redberry-coprate-cms/
+# api documentation

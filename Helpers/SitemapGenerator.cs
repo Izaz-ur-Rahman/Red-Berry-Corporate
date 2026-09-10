@@ -94,15 +94,18 @@ namespace RedBerryCorporate.Helpers
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
+        private readonly ISitemapPublisher _publisher;
 
         public SitemapGenerator(
             ApplicationDbContext context,
             IWebHostEnvironment environment,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ISitemapPublisher publisher)
         {
             _context = context;
             _environment = environment;
             _configuration = configuration;
+            _publisher = publisher;
         }
 
         public async Task<string> GenerateXmlAsync()
@@ -419,6 +422,17 @@ namespace RedBerryCorporate.Helpers
                 path,
                 xml,
                 Encoding.UTF8);
+
+            //---------------------------------------------
+            // Also push the same XML to the website's own
+            // hosting (redberry.ae), so it is served directly
+            // from https://redberry.ae/sitemap.xml as a real
+            // static file. Best-effort: this never throws back
+            // into callers (blog/category save flows) — see
+            // FtpSitemapPublisher.
+            //---------------------------------------------
+
+            await _publisher.PublishAsync(xml);
         }
 
         //---------------------------------------------
